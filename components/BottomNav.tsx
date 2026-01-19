@@ -1,6 +1,6 @@
 import React from 'react';
 
-type NavItem = 'home' | 'collections' | 'lab' | 'profile' | 'cart';
+type NavItem = 'home' | 'collections' | 'about' | 'popular' | 'cart';
 
 interface BottomNavProps {
   activeTab: string;
@@ -11,8 +11,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange }) 
   const navItems: { id: NavItem; label: string; icon: string }[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'collections', label: 'Collections', icon: 'category' },
-    { id: 'lab', label: 'The Lab', icon: 'science' },
-    { id: 'profile', label: 'Profile', icon: 'person' },
+    { id: 'popular', label: 'Popular', icon: 'favorite' },
+    { id: 'about', label: 'About', icon: 'auto_awesome' },
     { id: 'cart', label: 'Cart', icon: 'shopping_cart' },
   ];
 

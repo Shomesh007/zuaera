@@ -1,157 +1,209 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { CartItem } from '../App';
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  volume: string;
-  edition: string;
-  type: string;
-  glowColor: string;
+interface CartProps {
+  items: CartItem[];
+  onUpdateQuantity: (cartItemId: string, delta: number) => void;
+  onRemove: (cartItemId: string) => void;
+  onBrowseCollection: () => void;
 }
 
-export const Cart: React.FC = () => {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'NEBULA MIST',
-      price: 400,
-      image: 'https://images.unsplash.com/photo-1595867275462-87f5a31ebdf3?auto=format&fit=crop&w=600&q=80',
-      volume: '50ML',
-      edition: 'Cosmic Edition',
-      type: 'Extrait',
-      glowColor: 'rgba(147,51,234,0.3)'
-    },
-    {
-      id: '2',
-      name: 'VOID GOLD',
-      price: 400,
-      image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80',
-      volume: '100ML',
-      edition: 'Signature',
-      type: 'Parfum',
-      glowColor: 'rgba(242,208,13,0.2)'
-    },
-     {
-      id: '3',
-      name: 'LUNAR DUST',
-      price: 350,
-      image: 'https://images.unsplash.com/photo-1615255959074-b788006e886c?auto=format&fit=crop&w=600&q=80',
-      volume: '50ML',
-      edition: 'Limited',
-      type: 'Eau de Parfum',
-      glowColor: 'rgba(255,255,255,0.2)'
-    }
-  ]);
+// Internal component for animating price changes
+const AnimatedPrice: React.FC<{ value: number; className?: string }> = ({ value, className = "" }) => {
+  const [animClass, setAnimClass] = useState("");
+  const prevValue = useRef(value);
 
+  useEffect(() => {
+    if (value !== prevValue.current) {
+      if (value > prevValue.current) {
+         setAnimClass("scale-110 text-primary brightness-125");
+      } else {
+         setAnimClass("scale-95 opacity-80");
+      }
+      
+      const timer = setTimeout(() => {
+        setAnimClass("");
+      }, 300);
+
+      prevValue.current = value;
+      return () => clearTimeout(timer);
+    }
+  }, [value]);
+
+  return (
+    <span className={`inline-block transition-all duration-300 transform ${animClass} ${className}`}>
+      ₹{value.toLocaleString('en-IN')}
+    </span>
+  );
+};
+
+export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, onBrowseCollection }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleRemove = (id: string) => {
-    setDeletingId(id);
+  // Auto-focus the scroll container on mount
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.focus();
+    }
+  }, []);
+
+  const handleRemove = (cartItemId: string) => {
+    setDeletingId(cartItemId);
     setTimeout(() => {
-      setItems(prev => prev.filter(item => item.id !== id));
+      onRemove(cartItemId);
       setDeletingId(null);
     }, 500);
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
   return (
-    <div className="min-h-full w-full pt-28 px-6 pb-32 flex flex-col animate-fade-in">
-      {/* Page Header */}
-      <div className="flex justify-between items-start mb-8">
+    <div className="relative min-h-[100dvh] w-full pt-24 flex flex-col bg-background-dark overflow-hidden">
+      {/* Page Header - Fixed at top of content flow */}
+      <div className="flex justify-between items-start px-6 mb-4 shrink-0 z-10">
         <div>
           <h1 className="text-4xl font-bold font-display text-white tracking-wider mb-1">CART</h1>
           <p className="text-white/40 text-[10px] tracking-[0.2em] uppercase">Your Selection</p>
         </div>
         <div className="px-4 py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(242,208,13,0.1)]">
-          {items.length.toString().padStart(2, '0')} Items
+          {items.reduce((acc, i) => acc + i.quantity, 0).toString().padStart(2, '0')} Items
         </div>
       </div>
 
       {/* Product Scroll Area */}
-      <div className="flex overflow-x-auto gap-5 pb-8 -mx-6 px-6 scrollbar-hide snap-x snap-mandatory min-h-[420px]">
+      <div 
+        ref={scrollContainerRef}
+        tabIndex={0}
+        className="flex-1 w-full overflow-x-auto flex items-start gap-5 px-6 pb-48 snap-x snap-mandatory scrollbar-hide focus:outline-none touch-pan-x pt-4"
+      >
         {items.length === 0 ? (
-          <div className="w-full flex items-center justify-center text-white/30 text-xs tracking-widest uppercase">
-            Your cart is empty
+          <div className="w-full h-[50vh] flex flex-col items-center justify-center gap-6 text-white/30 text-xs tracking-widest uppercase animate-fade-in mx-auto">
+            <span className="material-symbols-outlined text-4xl opacity-50">shopping_bag</span>
+            <span>Your cart is empty</span>
+            <button 
+              onClick={onBrowseCollection}
+              className="px-6 py-3 border border-primary/30 rounded-full text-primary hover:bg-primary/10 transition-colors"
+            >
+              Browse Collection
+            </button>
           </div>
         ) : (
           items.map((item) => (
             <div 
-              key={item.id}
-              className={`snap-center shrink-0 w-[85%] max-w-[320px] bg-[#12110a] rounded-3xl border border-white/5 overflow-hidden group transition-all duration-500 ease-out
-                ${deletingId === item.id ? 'opacity-0 scale-90 translate-y-8' : 'opacity-100 scale-100 translate-y-0'}
+              key={item.cartItemId}
+              className={`snap-center shrink-0 w-[85%] max-w-[320px] h-[55vh] min-h-[400px] max-h-[480px] bg-[#12110a] rounded-3xl border border-white/5 overflow-hidden group transition-all duration-500 ease-out flex flex-col
+                ${deletingId === item.cartItemId ? 'opacity-0 scale-90 translate-y-8' : 'opacity-100 scale-100 translate-y-0'}
               `}
             >
-              <div className="relative h-80 w-full bg-gradient-to-b from-[#1a1810] to-[#0a0905] flex items-center justify-center overflow-hidden">
-                {/* Dynamic Glow Background */}
+              {/* Image Section */}
+              <div className="relative flex-1 bg-gradient-to-b from-[#1a1810] to-[#0a0905] flex items-center justify-center overflow-hidden shrink-0 min-h-[45%]">
                 <div 
                   className="absolute inset-0 animate-pulse-slow"
                   style={{ background: `radial-gradient(circle at 50% 50%, ${item.glowColor}, transparent 70%)` }}
                 ></div>
                 
-                <div className="absolute top-4 right-4 px-3 py-1 rounded-full border border-white/10 bg-black/40 backdrop-blur-md">
-                  <span className="text-[9px] text-white/80 tracking-widest uppercase font-bold">{item.type}</span>
+                <div className="absolute top-4 right-4 px-3 py-1 rounded-full border border-white/10 bg-black/40 backdrop-blur-md z-20">
+                  <span className="text-[9px] text-white/80 tracking-widest uppercase font-bold">Series {item.series}</span>
                 </div>
 
                 <img 
                   src={item.image} 
                   alt={item.name}
-                  className="relative z-10 h-64 w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700 mix-blend-screen opacity-90"
+                  className="relative z-10 h-[80%] w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700 mix-blend-screen opacity-90"
                 />
               </div>
               
-              <div className="p-6 relative">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-2xl font-bold text-white font-display tracking-wide">{item.name}</h3>
-                  <button 
-                    onClick={() => handleRemove(item.id)}
-                    className="text-white/30 hover:text-red-500 transition-colors p-1"
-                    disabled={deletingId === item.id}
-                  >
-                    <span className="material-symbols-outlined text-lg">delete</span>
-                  </button>
+              {/* Info Section */}
+              <div className="p-5 relative flex flex-col shrink-0">
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className="text-xl font-bold text-white font-display tracking-wide">{item.name}</h3>
                 </div>
                 <p className="text-primary text-[10px] tracking-[0.2em] uppercase font-bold mb-4">
-                  {item.volume} • {item.edition}
+                  {item.volume} • {item.liveText}
                 </p>
-                <p className="text-white/60 text-sm font-medium">
-                  ${item.price.toFixed(2)}
-                </p>
+
+                <div className="space-y-4">
+                   {/* Quantity Controls */}
+                   <div className="flex items-center justify-between bg-white/5 rounded-lg p-2 border border-white/5">
+                      <span className="text-white/60 text-[10px] uppercase tracking-wider pl-2">Quantity</span>
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => onUpdateQuantity(item.cartItemId, -1)}
+                          className="size-8 rounded-md bg-black/40 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">remove</span>
+                        </button>
+                        <span className="text-white font-display w-4 text-center">{item.quantity}</span>
+                        <button 
+                          onClick={() => onUpdateQuantity(item.cartItemId, 1)}
+                          className="size-8 rounded-md bg-black/40 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">add</span>
+                        </button>
+                      </div>
+                   </div>
+
+                   <div className="flex justify-between items-end">
+                      <button 
+                        onClick={() => handleRemove(item.cartItemId)}
+                        className="text-red-400/60 hover:text-red-400 text-[10px] uppercase tracking-widest transition-colors py-1"
+                        disabled={deletingId === item.cartItemId}
+                      >
+                        Remove
+                      </button>
+                      <p className="text-white font-medium text-lg">
+                        <AnimatedPrice value={item.price * item.quantity} />
+                      </p>
+                   </div>
+                </div>
               </div>
             </div>
           ))
         )}
+        
+        {/* Spacer */}
+        {items.length > 0 && <div className="snap-center w-2 shrink-0"></div>}
       </div>
 
       {/* Checkout Section */}
-      <div className="mt-auto w-full bg-[#12110a] border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-deep-black">
-        <div className="space-y-3 mb-6">
-          <div className="flex justify-between text-sm">
-            <span className="text-white/60 font-light tracking-wide">Subtotal</span>
-            <span className="text-white font-medium tracking-wider">${subtotal.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-white/60 font-light tracking-wide">Tax</span>
-            <span className="text-white font-medium tracking-wider">${tax.toFixed(2)}</span>
-          </div>
-          <div className="h-px w-full bg-white/5 my-2"></div>
-          <div className="flex justify-between text-xl font-bold">
-            <span className="text-white tracking-wide">Total</span>
-            <span className="text-primary tracking-wider drop-shadow-[0_0_10px_rgba(242,208,13,0.3)]">
-              ${total.toFixed(2)}
-            </span>
+      {items.length > 0 && (
+        <div className="fixed bottom-[90px] left-0 right-0 px-6 z-40 flex justify-center pointer-events-none animate-fade-in">
+          <div className="w-full max-w-md bg-[#12110a]/95 border border-white/10 rounded-2xl p-5 backdrop-blur-xl shadow-deep-black pointer-events-auto">
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/60 font-light tracking-wide">Subtotal</span>
+                <span className="text-white font-medium tracking-wider">
+                  <AnimatedPrice value={subtotal} />
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/60 font-light tracking-wide">Tax</span>
+                <span className="text-white font-medium tracking-wider">
+                  <AnimatedPrice value={tax} />
+                </span>
+              </div>
+              <div className="h-px w-full bg-white/5 my-2"></div>
+              <div className="flex justify-between text-xl font-bold">
+                <span className="text-white tracking-wide">Total</span>
+                <span className="text-primary tracking-wider drop-shadow-[0_0_10px_rgba(242,208,13,0.3)]">
+                   <AnimatedPrice value={total} />
+                </span>
+              </div>
+            </div>
+
+            <button 
+              className="w-full bg-primary text-black h-12 rounded-full flex items-center justify-center gap-3 hover:bg-primary-dark transition-all duration-300 shadow-[0_0_20px_rgba(242,208,13,0.5)] hover:shadow-[0_0_30px_rgba(242,208,13,0.7)] group cursor-pointer active:scale-95"
+              onClick={() => alert("Proceeding to checkout...")}
+            >
+              <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">fingerprint</span>
+              <span className="text-xs font-bold tracking-[0.15em] uppercase">Checkout</span>
+            </button>
           </div>
         </div>
-
-        <button className="w-full bg-primary text-black h-14 rounded-full flex items-center justify-center gap-3 hover:bg-primary-dark transition-all duration-300 shadow-[0_0_20px_rgba(242,208,13,0.3)] group">
-          <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">fingerprint</span>
-          <span className="text-sm font-bold tracking-[0.15em] uppercase">Biometric Checkout</span>
-        </button>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export const Hero: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   const scrollToAbout = () => {
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  useEffect(() => {
+    // Ensure video plays on mount if policy allows
+    if (videoRef.current) {
+        videoRef.current.play().catch(e => console.log("Autoplay blocked:", e));
+    }
+  }, []);
+
   return (
     <section className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-background-dark z-50">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(242,208,13,0.05),transparent_60%)]"></div>
-      <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+      {/* Video Background */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        src="zuaera-hero.mp4"
+        autoPlay
+        muted
+        playsInline
+      />
       
-      {/* Animated Rings */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-        <div className="w-[600px] h-[600px] border border-primary/20 rounded-full animate-pulse-slow"></div>
-        <div className="absolute w-[450px] h-[450px] border border-primary/10 rounded-full animate-float"></div>
-      </div>
+      {/* Overlay to ensure text readability */}
+      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
       <div className="z-10 text-center px-6 flex flex-col items-center">
         <span className="text-primary/60 text-xs tracking-[0.4em] uppercase mb-6 animate-float-delayed">Est. 2024</span>
@@ -38,7 +50,7 @@ export const Hero: React.FC = () => {
       </div>
       
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 animate-bounce text-white/20">
+      <div className="absolute bottom-10 animate-bounce text-white/20 z-10">
         <span className="material-symbols-outlined">keyboard_arrow_down</span>
       </div>
     </section>

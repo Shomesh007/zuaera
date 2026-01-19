@@ -7,6 +7,8 @@ interface HeaderProps {
   activeCategory?: string;
   onCategorySelect?: (category: string) => void;
   onCartClick?: () => void;
+  onTitleClick?: () => void;
+  cartCount?: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -15,19 +17,30 @@ export const Header: React.FC<HeaderProps> = ({
   categories = [], 
   activeCategory, 
   onCategorySelect,
-  onCartClick
+  onCartClick,
+  onTitleClick,
+  cartCount = 0
 }) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col bg-[#0a0905]/95 backdrop-blur-md pt-4 pb-2 border-b border-white/5 shadow-2xl transition-all duration-300">
       <div className="flex items-center justify-between px-6 mb-5">
-        <h2 className="text-primary text-xl font-bold leading-tight tracking-[0.25em] font-display uppercase drop-shadow-[0_0_8px_rgba(242,208,13,0.4)] cursor-pointer">
+        <h2 
+          onClick={onTitleClick}
+          className="text-primary text-xl font-bold leading-tight tracking-[0.25em] font-display uppercase drop-shadow-[0_0_8px_rgba(242,208,13,0.4)] cursor-pointer hover:text-white transition-colors"
+        >
           {title}
         </h2>
         <button 
           onClick={onCartClick}
-          className="size-10 flex items-center justify-center rounded-full border border-primary/20 bg-background-dark/40 backdrop-blur-md text-primary hover:bg-primary/10 transition-colors"
+          className="relative size-10 flex items-center justify-center rounded-full border border-primary/20 bg-background-dark/40 backdrop-blur-md text-primary hover:bg-primary/10 transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
+          
+          {cartCount > 0 && (
+            <div className="absolute -top-1 -right-1 size-4 bg-primary text-black text-[9px] font-bold flex items-center justify-center rounded-full animate-fade-in shadow-[0_0_10px_rgba(242,208,13,0.8)]">
+              {cartCount}
+            </div>
+          )}
         </button>
       </div>
       
