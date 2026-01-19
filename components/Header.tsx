@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
       
       {/* Scrollable Categories Container - Conditionally Rendered */}
       {showCategories && categories.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto px-6 pt-4 pb-3 scrollbar-hide w-full snap-x snap-mandatory">
+        <div className="flex items-center justify-center gap-2 overflow-x-auto px-6 pt-4 pb-3 scrollbar-hide w-full snap-x snap-mandatory">
           {categories.map((cat) => {
             const isActive = activeCategory === cat;
             // Parse category: "01 Crisp" -> num: "01", name: "Crisp"

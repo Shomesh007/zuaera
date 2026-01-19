@@ -57,28 +57,6 @@ const PRODUCTS: Product[] = [
     ]
   },
   {
-    id: "02",
-    series: "02",
-    name: "CRISP II",
-    navLabel: "02 Crisp+",
-    tags: ["Fresh", "Fruity", "Aromatic", "Modern"],
-    description: "This variant of CRISP leans more aromatic and woody, balancing freshness with subtle depth. It feels crisp yet grounded, with a refined, everyday elegance.",
-    tagline: "A breath of rarefied air.",
-    highlights: [
-      { label: "Focus", value: "Aromatic", icon: "filter_vintage" },
-      { label: "Longevity", value: "10+ Hours", icon: "history" }
-    ],
-    price: 1999,
-    volume: "50ML",
-    image: "https://images.unsplash.com/photo-1615195627275-4869291d17d6?auto=format&fit=crop&w=600&q=80",
-    glowColor: "rgba(100, 255, 100, 0.2)",
-    ingredients: [
-      { name: "Apple", url: "https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=300&q=80" },
-      { name: "Sage", url: "https://images.unsplash.com/photo-1621379199326-7243c3d52684?auto=format&fit=crop&w=300&q=80" },
-      { name: "Cedar", url: "https://images.unsplash.com/photo-1615195627275-4869291d17d6?auto=format&fit=crop&w=300&q=80" }
-    ]
-  },
-  {
     id: "03",
     series: "03",
     name: "EYES",
@@ -120,28 +98,6 @@ const PRODUCTS: Product[] = [
       { name: "Saffron", url: "https://images.unsplash.com/photo-1623157879673-81e5b5c900e5?auto=format&fit=crop&w=300&q=80" },
       { name: "Rose", url: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=300&q=80" },
       { name: "Oud", url: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=300&q=80" }
-    ]
-  },
-  {
-    id: "05",
-    series: "05",
-    name: "VIBE II",
-    navLabel: "05 Vibe+",
-    tags: ["Warm", "Spiced", "Woody", "Sweet"],
-    description: "This variant of VIBE adds subtle sweetness and spice, making it more expressive and layered. It retains the depth of the original while introducing a smoother, more playful warmth.",
-    tagline: "Oscillations of sweet resonance.",
-    highlights: [
-      { label: "Projection", value: "High", icon: "wifi_tethering" },
-      { label: "Base", value: "Agarwood", icon: "forest" }
-    ],
-    price: 5199,
-    volume: "100ML",
-    image: "https://images.unsplash.com/photo-1615255959074-b788006e886c?auto=format&fit=crop&w=600&q=80",
-    glowColor: "rgba(242, 150, 13, 0.3)",
-    ingredients: [
-      { name: "Pepper", url: "https://images.unsplash.com/photo-1600336599723-64e52565451a?auto=format&fit=crop&w=300&q=80" },
-      { name: "Agarwood", url: "https://images.unsplash.com/photo-1615255959074-b788006e886c?auto=format&fit=crop&w=300&q=80" },
-      { name: "Cane", url: "https://images.unsplash.com/photo-1627820751275-f551c91b5c40?auto=format&fit=crop&w=300&q=80" }
     ]
   }
 ];
@@ -239,7 +195,7 @@ const App: React.FC = () => {
       <main className="flex-1 w-full">
         {currentView === 'home' && (
           <div>
-            <Hero />
+            <Hero onExploreCollections={() => setCurrentView('collections')} />
             <About />
           </div>
         )}

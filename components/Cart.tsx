@@ -61,7 +61,7 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
   const total = subtotal + tax;
 
   return (
-    <div className="relative min-h-[100dvh] w-full pt-24 flex flex-col bg-background-dark overflow-hidden">
+    <div className="relative min-h-[100dvh] w-full pt-24 flex flex-col bg-background-dark overflow-y-auto">
       {/* Page Header - Fixed at top of content flow */}
       <div className="flex justify-between items-start px-6 mb-4 shrink-0 z-10">
         <div>

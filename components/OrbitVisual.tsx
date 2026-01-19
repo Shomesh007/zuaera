@@ -45,9 +45,9 @@ export const OrbitVisual: React.FC<OrbitVisualProps> = ({ seriesNumber, ingredie
       {ingredients[0] && (
         <div className="absolute top-8 right-6 z-30 flex flex-col items-center gap-2 animate-float">
           <div className="w-16 h-16 rounded-full border border-primary bg-black p-0.5 flex items-center justify-center gold-glow-intense cursor-pointer hover:scale-110 transition-transform">
-            <div 
-              className="w-full h-full rounded-full bg-cover bg-center opacity-90" 
-              style={{ backgroundImage: `url('${ingredients[0].url}')` }}
+            <div
+              className="w-full h-full rounded-full bg-cover bg-center opacity-90"
+              style={{ backgroundImage: seriesNumber === "04" && ingredients[0]?.name.toLowerCase() === "saffron" ? `url('/saffron.png')` : `url('${ingredients[0].url}')` }}
             ></div>
           </div>
           <p className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase bg-black/80 px-2 py-0.5 rounded border border-primary/20 backdrop-blur-sm shadow-lg">
