@@ -11,21 +11,33 @@ interface OrbitVisualProps {
 }
 
 export const OrbitVisual: React.FC<OrbitVisualProps> = ({ seriesNumber, ingredients }) => {
+  // Determine perfume image based on seriesNumber
+  let perfumeImage = null;
+  if (seriesNumber === "04") perfumeImage = "/vibe.jpeg";
+  if (seriesNumber === "05") perfumeImage = "/vibe_variant.jpg";
+  // Add more mappings as needed for other perfumes
+
   return (
     <div className="relative w-full h-[45vh] flex items-center justify-center mt-2 mb-4 perspective-[1000px]">
       {/* Central Card */}
       <div className="relative z-20 w-52 h-72 bg-gradient-to-br from-[#12110a] to-black rounded-xl border border-primary/50 flex items-center justify-center deep-glow overflow-hidden transform transition-transform duration-500 hover:scale-[1.02]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,_rgba(242,208,13,0.1),transparent_70%)]"></div>
-        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
-        
-        <div className="flex flex-col items-center relative z-10">
-          <span className="text-[9px] text-primary/70 tracking-[0.4em] mb-3 uppercase">Series</span>
-          <span className="text-7xl font-bold text-white font-display drop-shadow-[0_0_20px_rgba(242,208,13,0.2)]">
-            {seriesNumber}
-          </span>
-          <div className="w-12 h-[2px] bg-primary mt-4 shadow-[0_0_10px_rgba(242,208,13,1)]"></div>
-        </div>
-        
+        {perfumeImage ? (
+          <img src={perfumeImage} alt="Perfume"
+            className={`absolute inset-0 w-full h-full object-cover scale-125 z-10 ${seriesNumber === "04" ? "-translate-x-8" : ""}${seriesNumber === "05" ? " translate-x-4" : ""}`}
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,_rgba(242,208,13,0.1),transparent_70%)]"></div>
+            <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+            <div className="flex flex-col items-center relative z-10">
+              <span className="text-[9px] text-primary/70 tracking-[0.4em] mb-3 uppercase">Series</span>
+              <span className="text-7xl font-bold text-white font-display drop-shadow-[0_0_20px_rgba(242,208,13,0.2)]">
+                {seriesNumber}
+              </span>
+              <div className="w-12 h-[2px] bg-primary mt-4 shadow-[0_0_10px_rgba(242,208,13,1)]"></div>
+            </div>
+          </>
+        )}
         <div className="absolute bottom-0 w-full h-1/3 bg-gradient-to-t from-primary/10 to-transparent"></div>
       </div>
 

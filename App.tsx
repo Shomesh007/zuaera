@@ -238,7 +238,7 @@ const App: React.FC = () => {
       {/* Main Content Area */}
       <main className="flex-1 w-full">
         {currentView === 'home' && (
-          <div className="animate-float">
+          <div>
             <Hero />
             <About />
           </div>

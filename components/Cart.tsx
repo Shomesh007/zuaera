@@ -110,9 +110,14 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
                 </div>
 
                 <img 
-                  src={item.image} 
+                  src={
+                    item.series === "04" ? "/vibe.jpeg" :
+                    item.series === "05" ? "/vibe_variant.jpg" :
+                    item.image
+                  }
                   alt={item.name}
-                  className="relative z-10 h-[80%] w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700 mix-blend-screen opacity-90"
+                  className={`relative z-10 h-full w-full object-cover scale-125 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-700 mix-blend-screen opacity-90
+                    ${item.series === "04" ? "-translate-x-8" : ""}${item.series === "05" ? " translate-x-4" : ""}`}
                 />
               </div>
               
