@@ -7,6 +7,7 @@ import { ProductInfo } from './components/ProductInfo';
 import { Popular } from './components/Popular';
 import { BottomNav } from './components/BottomNav';
 import { Cart } from './components/Cart';
+import { ScentDNA } from './components/ScentDNA';
 
 // Enhanced Data Model
 export interface Product {
@@ -102,7 +103,7 @@ const PRODUCTS: Product[] = [
   }
 ];
 
-type View = 'home' | 'collections' | 'about' | 'popular' | 'cart';
+type View = 'home' | 'collections' | 'about' | 'popular' | 'cart' | 'scent-dna';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
@@ -240,6 +241,7 @@ const App: React.FC = () => {
                 prices={currentPrices}
                 defaultVolume={currentProduct.volume === '50ML' ? '50ML' : '100ML'}
                 onAddToCart={(vol, price) => handleAddToCart(currentProduct, vol, price)}
+                onShowNotes={() => setCurrentView('scent-dna')}
               />
             </div>
           </section>
@@ -263,6 +265,18 @@ const App: React.FC = () => {
             onBrowseCollection={() => setCurrentView('collections')}
           />
         )}
+
+        {currentView === 'scent-dna' && (
+          <ScentDNA
+            product={currentProduct}
+            price={currentProduct.price}
+            onBack={() => setCurrentView('collections')}
+            onAddToCollection={() => {
+              handleAddToCart(currentProduct, '30ML', currentProduct.price);
+              setCurrentView('cart');
+            }}
+          />
+        )}
         
         {currentView === 'about' && (
           <div className="pt-20 animate-fade-in">
@@ -271,8 +285,10 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global Bottom Navigation */}
-      <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
+      {/* Global Bottom Navigation - Hidden on scent-dna view as it has its own bottom bar */}
+      {currentView !== 'scent-dna' && (
+        <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
+      )}
     </div>
   );
 };

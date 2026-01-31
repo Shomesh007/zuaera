@@ -11,6 +11,7 @@ interface ProductInfoProps {
   prices: { "50ML": number; "100ML": number };
   defaultVolume?: string;
   onAddToCart: (volume: string, price: number) => void;
+  onShowNotes?: () => void;
 }
 
 export const ProductInfo: React.FC<ProductInfoProps> = ({ 
@@ -20,7 +21,8 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({
   highlights,
   prices,
   defaultVolume = '50ML',
-  onAddToCart 
+  onAddToCart,
+  onShowNotes 
 }) => {
   const [selectedVolume, setSelectedVolume] = useState(defaultVolume);
 
@@ -37,7 +39,12 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({
           <h3 className="text-primary text-[10px] font-bold tracking-[0.3em] uppercase mb-2 drop-shadow-[0_0_8px_rgba(242,208,13,0.3)]">Extrait De Parfum</h3>
           <h1 className="text-white text-5xl font-bold tracking-tight mb-4 font-display drop-shadow-lg">{title}</h1>
           <p className="text-primary/90 text-sm italic font-medium tracking-wide mb-2 max-w-xs mx-auto">"{tagline}"</p>
-          <button className="mb-8 px-6 py-2 rounded-full bg-primary text-black font-bold uppercase text-xs tracking-widest shadow hover:bg-primary/80 transition-colors">Show Notes</button>
+          <button 
+            onClick={onShowNotes}
+            className="mb-8 px-6 py-2 rounded-full bg-primary text-black font-bold uppercase text-xs tracking-widest shadow hover:bg-primary/80 transition-colors"
+          >
+            Show Notes
+          </button>
           
           {/* Tags Row */}
           <div className="relative mb-10 w-full">
