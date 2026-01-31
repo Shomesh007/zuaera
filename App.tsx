@@ -10,6 +10,36 @@ import { Cart } from './components/Cart';
 import { ScentDNA } from './components/ScentDNA';
 import { ImagePreloader } from './components/ImagePreloader';
 import { CartToast } from './components/CartToast';
+import { DesktopPortal } from './components/DesktopPortal';
+
+// Desktop detection hook
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkDesktop = () => {
+      // Check screen width (768px is typical tablet/desktop breakpoint)
+      const isWideScreen = window.innerWidth >= 768;
+      
+      // Check if it's a touch device (most mobile devices have touch)
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      
+      // Check user agent for mobile indicators
+      const mobileKeywords = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      const isMobileUA = mobileKeywords.test(navigator.userAgent);
+      
+      // Consider desktop if: wide screen AND (not a touch-only device OR not mobile UA)
+      // This allows tablets in landscape to still access mobile, but blocks true desktops
+      setIsDesktop(isWideScreen && !isMobileUA);
+    };
+
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  return isDesktop;
+};
 
 // Enhanced Data Model
 export interface Product {
@@ -108,6 +138,7 @@ const PRODUCTS: Product[] = [
 type View = 'home' | 'collections' | 'about' | 'popular' | 'cart' | 'scent-dna';
 
 const App: React.FC = () => {
+  const isDesktop = useIsDesktop();
   const [currentView, setCurrentView] = useState<View>('home');
   const [activeCategory, setActiveCategory] = useState('04 Vibe');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -115,6 +146,7 @@ const App: React.FC = () => {
 
   // Listen for bundle add event
   useEffect(() => {
+    if (isDesktop) return; // Skip on desktop
     const handler = () => {
       const crisp = PRODUCTS.find(p => p.id === "01");
       const vibe = PRODUCTS.find(p => p.id === "04");
@@ -136,12 +168,18 @@ const App: React.FC = () => {
     };
     window.addEventListener('add-bundle-to-cart', handler);
     return () => window.removeEventListener('add-bundle-to-cart', handler);
-  }, []);
+  }, [isDesktop]);
 
   // Scroll to top instantly when view changes to prevent "extra scroll" issues
   useEffect(() => {
+    if (isDesktop) return; // Skip on desktop
     window.scrollTo(0, 0);
-  }, [currentView]);
+  }, [currentView, isDesktop]);
+
+  // If on desktop, show the desktop portal page
+  if (isDesktop) {
+    return <DesktopPortal />;
+  }
 
   // Derive current product from active category or default to Vibe
   const currentProduct = PRODUCTS.find(p => p.navLabel === activeCategory) || PRODUCTS[3];
