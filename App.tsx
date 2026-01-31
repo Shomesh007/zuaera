@@ -9,6 +9,7 @@ import { BottomNav } from './components/BottomNav';
 import { Cart } from './components/Cart';
 import { ScentDNA } from './components/ScentDNA';
 import { ImagePreloader } from './components/ImagePreloader';
+import { CartToast } from './components/CartToast';
 
 // Enhanced Data Model
 export interface Product {
@@ -110,6 +111,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [activeCategory, setActiveCategory] = useState('04 Vibe');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [toastProduct, setToastProduct] = useState<string | null>(null);
 
   // Listen for bundle add event
   useEffect(() => {
@@ -182,6 +184,9 @@ const App: React.FC = () => {
         }
       ];
     });
+    
+    // Show toast notification
+    setToastProduct(product.name);
   };
 
   const handleUpdateQuantity = (cartItemId: string, delta: number) => {
@@ -204,6 +209,13 @@ const App: React.FC = () => {
 
   return (
     <div className="relative min-h-[100dvh] w-full flex flex-col bg-background-dark pb-24">
+      {/* Cart Toast Notification */}
+      <CartToast 
+        productName={toastProduct || ''} 
+        isVisible={!!toastProduct} 
+        onClose={() => setToastProduct(null)} 
+      />
+      
       {/* Global Header - Hidden on Popular view as it has its own custom header */}
       {currentView !== 'popular' && (
         <Header 
