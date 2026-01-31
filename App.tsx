@@ -46,14 +46,14 @@ const PRODUCTS: Product[] = [
       { label: "Family", value: "Citrus Green", icon: "eco" },
       { label: "Sillage", value: "Fresh / Airy", icon: "air" }
     ],
-    price: 1799,
-    volume: "50ML",
-    image: "https://images.unsplash.com/photo-1615255959074-b788006e886c?auto=format&fit=crop&w=600&q=80",
+    price: 1999,
+    volume: "30ML",
+    image: "/CRISP.jpg",
     glowColor: "rgba(100, 255, 218, 0.2)",
     ingredients: [
-      { name: "Mint", url: "https://images.unsplash.com/photo-1626469854832-7c38555e09f5?auto=format&fit=crop&w=300&q=80" },
-      { name: "Lavender", url: "https://images.unsplash.com/photo-1471943311424-646960669fbc?auto=format&fit=crop&w=300&q=80" },
-      { name: "Musk", url: "https://images.unsplash.com/photo-1596527582536-1e0e8568e2f8?auto=format&fit=crop&w=300&q=80" }
+      { name: "Mint", url: "/mint.png" },
+      { name: "Lavender", url: "/lavender.png" },
+      { name: "Musk", url: "/musk.png" }
     ]
   },
   {
@@ -68,13 +68,13 @@ const PRODUCTS: Product[] = [
       { label: "Character", value: "Skin Scent", icon: "fingerprint" },
       { label: "Texture", value: "Velvet / Warm", icon: "texture" }
     ],
-    price: 2299,
-    volume: "50ML",
-    image: "https://images.unsplash.com/photo-1595867275462-87f5a31ebdf3?auto=format&fit=crop&w=600&q=80",
+    price: 1999,
+    volume: "30ML",
+    image: "/EYES.jpg",
     glowColor: "rgba(236, 72, 153, 0.25)",
     ingredients: [
-      { name: "Vanilla", url: "https://images.unsplash.com/photo-1629327896349-433c2a933394?auto=format&fit=crop&w=300&q=80" },
-      { name: "Jasmine", url: "https://images.unsplash.com/photo-1599307767316-77f999cc8f2f?auto=format&fit=crop&w=300&q=80" },
+      { name: "Vanilla", url: "/vanilla.png" },
+      { name: "Jasmine", url: "/jasmine.png" },
       { name: "Amber", url: "https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&w=300&q=80" }
     ]
   },
@@ -90,8 +90,8 @@ const PRODUCTS: Product[] = [
       { label: "Longevity", value: "12+ Hours", icon: "history" },
       { label: "Molecular", value: "ISO E Super+", icon: "science" }
     ],
-    price: 4799,
-    volume: "100ML",
+    price: 1999,
+    volume: "30ML",
     image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80",
     glowColor: "rgba(242,208,13,0.3)",
     ingredients: [
@@ -108,6 +108,31 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('home');
   const [activeCategory, setActiveCategory] = useState('04 Vibe');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // Listen for bundle add event
+  useEffect(() => {
+    const handler = () => {
+      const crisp = PRODUCTS.find(p => p.id === "01");
+      const vibe = PRODUCTS.find(p => p.id === "04");
+      if (crisp && vibe) {
+        // Add both only if not already in cart
+        setCartItems(prev => {
+          let updated = [...prev];
+          const crispKey = `${crisp.id}-30ML`;
+          const vibeKey = `${vibe.id}-30ML`;
+          if (!updated.find(i => i.cartItemId === crispKey)) {
+            updated.push({ ...crisp, volume: "30ML", price: 1999, quantity: 1, cartItemId: crispKey });
+          }
+          if (!updated.find(i => i.cartItemId === vibeKey)) {
+            updated.push({ ...vibe, volume: "30ML", price: 1999, quantity: 1, cartItemId: vibeKey });
+          }
+          return updated;
+        });
+      }
+    };
+    window.addEventListener('add-bundle-to-cart', handler);
+    return () => window.removeEventListener('add-bundle-to-cart', handler);
+  }, []);
 
   // Scroll to top instantly when view changes to prevent "extra scroll" issues
   useEffect(() => {
@@ -222,7 +247,7 @@ const App: React.FC = () => {
 
         {currentView === 'popular' && (
           <div className="animate-fade-in">
-            <Popular 
+            <Popular
               onCartClick={() => setCurrentView('cart')}
               onTitleClick={() => setCurrentView('home')}
               cartCount={cartTotalItems}

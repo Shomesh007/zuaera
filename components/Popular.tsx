@@ -115,8 +115,8 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
               <p className="text-gray-400 text-xs mt-1">Perfectly paired essences</p>
             </div>
             <div className="text-right">
-              <span className="text-[#D4AF37] font-cinzel text-xl font-bold">₹5,999</span>
-              <span className="text-gray-500 text-xs line-through block">₹6,598</span>
+              <span className="text-[#D4AF37] font-cinzel text-xl font-bold">₹3,499</span>
+              <span className="text-gray-500 text-xs line-through block">₹3,998</span>
             </div>
           </div>
 
@@ -148,7 +148,13 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
             </div>
           </div>
 
-          <button className="w-full bg-[#D4AF37] hover:bg-yellow-500 text-black font-bold py-4 rounded-xl transition-all transform active:scale-95 flex items-center justify-center space-x-3 shadow-[0_4px_20px_rgba(212,175,55,0.3)] animate-[pulse-gold_2s_infinite]">
+          <button
+            className="w-full bg-[#D4AF37] hover:bg-yellow-500 text-black font-bold py-4 rounded-xl transition-all transform active:scale-95 flex items-center justify-center space-x-3 shadow-[0_4px_20px_rgba(212,175,55,0.3)] animate-[pulse-gold_2s_infinite]"
+            onClick={() => {
+              const event = new CustomEvent('add-bundle-to-cart');
+              window.dispatchEvent(event);
+            }}
+          >
             <span className="material-icons text-sm">add_shopping_cart</span>
             <span className="tracking-widest text-xs uppercase">Add Bundle to Cart</span>
           </button>

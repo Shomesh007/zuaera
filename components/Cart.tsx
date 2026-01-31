@@ -77,7 +77,7 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
       <div 
         ref={scrollContainerRef}
         tabIndex={0}
-        className="flex-1 w-full overflow-x-auto flex items-start gap-5 px-6 pb-48 snap-x snap-mandatory scrollbar-hide focus:outline-none touch-pan-x pt-4"
+        className="flex-1 w-full overflow-x-auto overflow-y-auto flex items-start gap-5 px-6 pb-60 snap-x snap-mandatory scrollbar-hide focus:outline-none pt-4 touch-pan-x"
       >
         {items.length === 0 ? (
           <div className="w-full h-[50vh] flex flex-col items-center justify-center gap-6 text-white/30 text-xs tracking-widest uppercase animate-fade-in mx-auto">
@@ -112,6 +112,8 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
                 <img 
                   src={
                     item.series === "04" ? "/vibe.jpeg" :
+                    item.series === "01" ? "/CRISP.jpg" :
+                    item.series === "03" ? "/EYES.jpg" :
                     item.series === "05" ? "/vibe_variant.jpg" :
                     item.image
                   }
@@ -199,9 +201,16 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
               </div>
             </div>
 
-            <button 
+            <button
               className="w-full bg-primary text-black h-12 rounded-full flex items-center justify-center gap-3 hover:bg-primary-dark transition-all duration-300 shadow-[0_0_20px_rgba(242,208,13,0.5)] hover:shadow-[0_0_30px_rgba(242,208,13,0.7)] group cursor-pointer active:scale-95"
-              onClick={() => alert("Proceeding to checkout...")}
+              onClick={() => {
+                const details = items.map(item =>
+                  `${item.name} (${item.volume}) x${item.quantity} - ₹${item.price * item.quantity}`
+                ).join("%0A");
+                const totalLine = `Total: ₹${total}`;
+                const msg = `Order Details:%0A${details}%0A${totalLine}`;
+                window.open(`https://wa.me/917092009114?text=${msg}`);
+              }}
             >
               <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">fingerprint</span>
               <span className="text-xs font-bold tracking-[0.15em] uppercase">Checkout</span>

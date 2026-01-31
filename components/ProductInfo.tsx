@@ -36,7 +36,8 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({
       <div className="text-center relative">
           <h3 className="text-primary text-[10px] font-bold tracking-[0.3em] uppercase mb-2 drop-shadow-[0_0_8px_rgba(242,208,13,0.3)]">Extrait De Parfum</h3>
           <h1 className="text-white text-5xl font-bold tracking-tight mb-4 font-display drop-shadow-lg">{title}</h1>
-          <p className="text-primary/90 text-sm italic font-medium tracking-wide mb-10 max-w-xs mx-auto">"{tagline}"</p>
+          <p className="text-primary/90 text-sm italic font-medium tracking-wide mb-2 max-w-xs mx-auto">"{tagline}"</p>
+          <button className="mb-8 px-6 py-2 rounded-full bg-primary text-black font-bold uppercase text-xs tracking-widest shadow hover:bg-primary/80 transition-colors">Show Notes</button>
           
           {/* Tags Row */}
           <div className="relative mb-10 w-full">
@@ -84,25 +85,9 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({
           ))}
       </div>
 
-      {/* Volume Selector (Mini) */}
+      {/* Only 30ML available */}
       <div className="flex justify-center gap-2 mb-6">
-         {Object.entries(prices).map(([vol, price]) => {
-           const isSelected = selectedVolume === vol;
-           return (
-             <button
-               key={vol}
-               onClick={() => setSelectedVolume(vol)}
-               className={`px-3 py-1.5 rounded-lg border text-[9px] font-bold uppercase tracking-widest transition-all duration-300
-                 ${isSelected 
-                   ? 'border-primary bg-primary text-black shadow-neon-gold' 
-                   : 'border-white/10 bg-transparent text-white/40 hover:text-white hover:border-white/20'
-                 }
-               `}
-             >
-               {vol}
-             </button>
-           );
-         })}
+        <span className="px-4 py-2 rounded-lg border border-primary bg-primary/10 text-primary font-bold uppercase tracking-widest text-xs">Only 30ML available</span>
       </div>
 
       {/* Bottom Action Bar */}
