@@ -25,6 +25,8 @@ export const OrbitVisual: React.FC<OrbitVisualProps> = ({ seriesNumber, ingredie
       <div className="relative z-20 w-52 h-72 bg-gradient-to-br from-[#12110a] to-black rounded-xl border border-primary/50 flex items-center justify-center deep-glow overflow-hidden transform transition-transform duration-500 hover:scale-[1.02]">
         {perfumeImage ? (
           <img src={perfumeImage} alt="Perfume"
+            loading="eager"
+            decoding="async"
             className={`absolute inset-0 w-full h-full object-cover scale-125 z-10
               ${seriesNumber === "04" ? "-translate-x-8" : ""}
               ${seriesNumber === "05" ? " translate-x-4" : ""}

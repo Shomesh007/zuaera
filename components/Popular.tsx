@@ -74,6 +74,8 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
           <img 
             alt="Intimate couple profile view in black and white with dramatic lighting" 
             className="w-full h-full object-cover opacity-80" 
+            loading="eager"
+            decoding="async"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi4Gsd6chh_JFbztTkrBXwjy4DZqBnQPv0gOwkEPd2AS-qlkW9M16rNoa30WwS5jiLS4HHO_a1xZF9dzZUJWPN2Lv3oAooc7cI6EPZ6AOgbjg02Ix3Be5G8673RYUpqAhqiVH8n4KqKsV2Z-CAM4Gnod-HKQ8pyGNIJtBdAGcd6Panq_oLUsCPfuJKHnWxRGj5ivB0tBeUdmikPbSavQGmo3LQCAg8rbEePj7KT_QZRPKKDQF6HSEU3klJ0F94icPpzh_XGld9flMN"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40 z-10"></div>

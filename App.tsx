@@ -8,6 +8,7 @@ import { Popular } from './components/Popular';
 import { BottomNav } from './components/BottomNav';
 import { Cart } from './components/Cart';
 import { ScentDNA } from './components/ScentDNA';
+import { ImagePreloader } from './components/ImagePreloader';
 
 // Enhanced Data Model
 export interface Product {
@@ -221,6 +222,7 @@ const App: React.FC = () => {
       <main className="flex-1 w-full">
         {currentView === 'home' && (
           <div>
+            <ImagePreloader />
             <Hero onExploreCollections={() => setCurrentView('collections')} />
             <About />
           </div>

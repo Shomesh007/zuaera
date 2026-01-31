@@ -39,6 +39,7 @@ export const Hero: React.FC<{ onExploreCollections?: () => void }> = ({ onExplor
         className="absolute left-0 top-0 w-full h-full z-0"
         style={{ objectFit: 'contain', height: '100vh', width: '100vw', maxHeight: '100vh', maxWidth: '100vw', objectPosition: 'center 15%' }}
         src="/zuaera-hero.mp4"
+        preload="auto"
         autoPlay
         muted
         playsInline
