@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://zuaera.com/</loc>
+    <lastmod>2026-02-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://zuaera.com/CRISP.jpg</image:loc>
+      <image:title>ZUAERA CRISP Perfume - Fresh Citrus Fragrance</image:title>
+      <image:caption>Premium fresh and green perfume from ZUAERA Pondicherry</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://zuaera.com/EYES.jpg</image:loc>
+      <image:title>ZUAERA EYES Perfume - Warm Sensual Fragrance</image:title>
+      <image:caption>Luxury warm and sweet perfume from ZUAERA Pondicherry</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://zuaera.com/vibe.jpeg</image:loc>
+      <image:title>ZUAERA VIBE Perfume - Signature Collection</image:title>
+      <image:caption>Signature fragrance from ZUAERA Pondicherry</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- Products Section (anchor link) -->
+  <url>
+    <loc>https://zuaera.com/#products</loc>
+    <lastmod>2026-02-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- About Section -->
+  <url>
+    <loc>https://zuaera.com/#about</loc>
+    <lastmod>2026-02-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+</urlset>

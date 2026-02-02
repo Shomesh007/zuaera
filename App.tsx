@@ -79,7 +79,7 @@ const PRODUCTS: Product[] = [
       { label: "Family", value: "Citrus Green", icon: "eco" },
       { label: "Sillage", value: "Fresh / Airy", icon: "air" }
     ],
-    price: 1999,
+    price: 999,
     volume: "30ML",
     image: "/CRISP.jpg",
     glowColor: "rgba(100, 255, 218, 0.2)",
@@ -101,7 +101,7 @@ const PRODUCTS: Product[] = [
       { label: "Character", value: "Skin Scent", icon: "fingerprint" },
       { label: "Texture", value: "Velvet / Warm", icon: "texture" }
     ],
-    price: 1999,
+    price: 999,
     volume: "30ML",
     image: "/EYES.jpg",
     glowColor: "rgba(236, 72, 153, 0.25)",
@@ -123,7 +123,7 @@ const PRODUCTS: Product[] = [
       { label: "Longevity", value: "12+ Hours", icon: "history" },
       { label: "Molecular", value: "ISO E Super+", icon: "science" }
     ],
-    price: 1999,
+    price: 999,
     volume: "30ML",
     image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80",
     glowColor: "rgba(242,208,13,0.3)",
@@ -157,10 +157,10 @@ const App: React.FC = () => {
           const crispKey = `${crisp.id}-30ML`;
           const vibeKey = `${vibe.id}-30ML`;
           if (!updated.find(i => i.cartItemId === crispKey)) {
-            updated.push({ ...crisp, volume: "30ML", price: 1999, quantity: 1, cartItemId: crispKey });
+            updated.push({ ...crisp, volume: "30ML", price: 999, quantity: 1, cartItemId: crispKey });
           }
           if (!updated.find(i => i.cartItemId === vibeKey)) {
-            updated.push({ ...vibe, volume: "30ML", price: 1999, quantity: 1, cartItemId: vibeKey });
+            updated.push({ ...vibe, volume: "30ML", price: 999, quantity: 1, cartItemId: vibeKey });
           }
           return updated;
         });
