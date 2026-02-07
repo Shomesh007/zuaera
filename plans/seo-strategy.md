@@ -5,19 +5,19 @@
 ### Primary Brand Keywords
 - `zuaera` (high priority)
 - `zuaera perfumes` (high priority)
-- `zuaera pondicherry`
+- `zuaera chennai`
 - `zuaera fragrances`
 
 ### Local/Geo Keywords
-- `perfumes in pondicherry` (high priority)
-- `perfume near pondicherry` (high priority)
+- `perfumes in chennai` (high priority)
+- `perfume near chennai` (high priority)
 - `perfumes nearby` (high priority)
-- `best perfumes pondicherry`
-- `luxury perfumes pondicherry`
-- `premium fragrances pondicherry`
-- `perfume shop pondicherry`
-- `puducherry perfumes`
-- `fragrance store near me pondicherry`
+- `best perfumes chennai`
+- `luxury perfumes chennai`
+- `premium fragrances chennai`
+- `perfume shop chennai`
+- `chennai perfumes`
+- `fragrance store near me chennai`
 
 ### Product Keywords
 - `crisp perfume`
@@ -85,7 +85,7 @@
 3. **Google Business Profile**
    - Create/claim your Google Business Profile at https://business.google.com
    - Add business name: "ZUAERA Perfumes"
-   - Add exact address in Pondicherry
+   - Add exact address in Chennai
    - Add phone number, hours, photos
    - Select category: "Perfume Store"
    - This is CRITICAL for "near me" searches!
@@ -102,10 +102,10 @@
    - Monitor keyword rankings
 
 6. **Local Directories**
-   - List on JustDial (Pondicherry)
+   - List on JustDial (Chennai)
    - List on Sulekha
    - List on IndiaMART
-   - List on local Pondicherry directories
+   - List on local Chennai directories
 
 7. **Social Media Optimization**
    - Create Instagram business account: @zuaera
@@ -116,7 +116,7 @@
 
 8. **Content Marketing**
    - Add a blog section with articles:
-     - "Best Perfumes in Pondicherry"
+     - "Best Perfumes in Chennai"
      - "How to Choose the Right Fragrance"
      - "ZUAERA: The Story Behind Our Scents"
    
@@ -126,7 +126,7 @@
    - Add Review schema markup
 
 10. **Local Link Building**
-    - Partner with Pondicherry lifestyle blogs
+    - Partner with Chennai lifestyle blogs
     - Get featured in local news/magazines
     - Collaborate with local influencers
 
@@ -140,12 +140,12 @@
 - **Title tag** starts with "ZUAERA"
 - **og:site_name** = "ZUAERA Perfumes"
 
-### For "perfumes near me" / "perfumes in pondicherry"
+### For "perfumes near me" / "perfumes in chennai"
 - **LocalBusiness schema** with geo coordinates
 - **Geo meta tags** (geo.region, geo.position)
-- **areaServed** covering Pondicherry & Tamil Nadu
+- **areaServed** covering Chennai & Tamil Nadu
 - **Google Business Profile** (most important!)
-- **Meta description** mentions "Pondicherry"
+- **Meta description** mentions "Chennai"
 
 ### For Product Searches
 - **Product schema** for each fragrance
@@ -161,7 +161,7 @@
 | Initial indexing | 1-2 weeks | Site appears in Google |
 | Brand keywords ranking | 2-4 weeks | #1 for "zuaera" |
 | Local keywords visibility | 1-2 months | Appear in local pack |
-| Top 10 local rankings | 3-6 months | First page for "perfumes pondicherry" |
+| Top 10 local rankings | 3-6 months | First page for "perfumes chennai" |
 
 ---
 
