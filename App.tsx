@@ -11,6 +11,8 @@ import { ScentDNA } from './components/ScentDNA';
 import { ImagePreloader } from './components/ImagePreloader';
 import { CartToast } from './components/CartToast';
 import { DesktopPortal } from './components/DesktopPortal';
+import { Collections } from './components/Collections';
+import { ProductDetail } from './components/ProductDetail';
 
 // Desktop detection hook
 const useIsDesktop = () => {
@@ -135,7 +137,7 @@ const PRODUCTS: Product[] = [
   }
 ];
 
-type View = 'home' | 'collections' | 'about' | 'popular' | 'cart' | 'scent-dna';
+type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna';
 
 const App: React.FC = () => {
   const isDesktop = useIsDesktop();
@@ -143,6 +145,7 @@ const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('04 Vibe');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [toastProduct, setToastProduct] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Listen for bundle add event
   useEffect(() => {
@@ -254,8 +257,8 @@ const App: React.FC = () => {
         onClose={() => setToastProduct(null)} 
       />
       
-      {/* Global Header - Hidden on Popular view as it has its own custom header */}
-      {currentView !== 'popular' && (
+      {/* Global Header - Hidden on Popular and Product Detail views as they have their own custom header */}
+      {currentView !== 'popular' && currentView !== 'product-detail' && (
         <Header 
           title="ZUAERA"
           showCategories={currentView === 'collections'}
@@ -279,24 +282,26 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'collections' && (
-          <section id="collection" className="relative w-full flex flex-col pt-32 animate-fade-in">
-            <div className="flex-1 flex flex-col items-center w-full max-w-lg mx-auto">
-              <OrbitVisual 
-                seriesNumber={currentProduct.series}
-                ingredients={currentProduct.ingredients}
-              />
-              <ProductInfo 
-                title={currentProduct.name}
-                tagline={currentProduct.tagline}
-                tags={currentProduct.tags}
-                highlights={currentProduct.highlights}
-                prices={currentPrices}
-                defaultVolume={currentProduct.volume === '50ML' ? '50ML' : '100ML'}
-                onAddToCart={(vol, price) => handleAddToCart(currentProduct, vol, price)}
-                onShowNotes={() => setCurrentView('scent-dna')}
-              />
-            </div>
-          </section>
+          <Collections 
+            products={PRODUCTS}
+            onProductSelect={(product) => {
+              setSelectedProduct(product);
+              setCurrentView('product-detail');
+            }}
+            cartItems={cartItems}
+          />
+        )}
+
+        {currentView === 'product-detail' && selectedProduct && (
+          <ProductDetail
+            product={selectedProduct}
+            onAddToCart={(quantity) => {
+              handleAddToCart(selectedProduct, '30ML', selectedProduct.price);
+              setToastProduct(selectedProduct.name);
+              setCurrentView('collections');
+            }}
+            onBack={() => setCurrentView('collections')}
+          />
         )}
 
         {currentView === 'popular' && (
@@ -337,8 +342,8 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global Bottom Navigation - Hidden on scent-dna view as it has its own bottom bar */}
-      {currentView !== 'scent-dna' && (
+      {/* Global Bottom Navigation - Hidden on scent-dna and product-detail views as they have their own bottom bar */}
+      {currentView !== 'scent-dna' && currentView !== 'product-detail' && (
         <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
       )}
     </div>
