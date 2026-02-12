@@ -13,10 +13,13 @@ interface OrbitVisualProps {
 export const OrbitVisual: React.FC<OrbitVisualProps> = ({ seriesNumber, ingredients }) => {
   // Determine perfume image based on seriesNumber
   let perfumeImage = null;
-  if (seriesNumber === "04") perfumeImage = "/vibe.jpeg";
-  if (seriesNumber === "05") perfumeImage = "/vibe_variant.jpg";
-  if (seriesNumber === "03") perfumeImage = "/EYES.jpg";
-  if (seriesNumber === "01") perfumeImage = "/CRISP.jpg";
+  if (seriesNumber === "04") perfumeImage = "/vibe (unisex).jpeg";
+  if (seriesNumber === "05") perfumeImage = "/vibe2.jpeg";
+  if (seriesNumber === "06") perfumeImage = "/vibe3.jpg";
+  if (seriesNumber === "03") perfumeImage = "/Eyes (female).jpeg";
+  if (seriesNumber === "01") perfumeImage = "/Crispy (Male).jpeg";
+  if (seriesNumber === "02") perfumeImage = "/crispy2.jpeg";
+  if (seriesNumber === "07") perfumeImage = "/crispy3.png";
   // Add more mappings as needed for other perfumes
 
   return (

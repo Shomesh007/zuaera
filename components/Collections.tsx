@@ -86,7 +86,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
         onClick={onProductClick}
       >
         <img
-          src={product.image}
+          src={
+            product.name.toLowerCase().includes('crisp') ? '/Crispy (Male).jpeg' :
+            product.name.toLowerCase().includes('vibe') ? '/vibe (unisex).jpeg' :
+            product.name.toLowerCase().includes('eyes') ? '/Eyes (female).jpeg' :
+            product.image
+          }
           alt={product.name}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             isHovered ? 'scale-110' : 'scale-100'

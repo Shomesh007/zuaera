@@ -15,7 +15,7 @@ export const CartToast: React.FC<CartToastProps> = ({ productName, isVisible, on
       const timer = setTimeout(() => {
         setIsAnimating(false);
         setTimeout(onClose, 300); // Wait for exit animation
-      }, 2500);
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [isVisible, onClose]);

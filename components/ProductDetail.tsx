@@ -4,12 +4,14 @@ import { Product } from '../App';
 interface ProductDetailProps {
   product: Product;
   onAddToCart: (quantity: number) => void;
+  onBuyNow: (quantity: number) => void;
   onBack: () => void;
 }
 
 export const ProductDetail: React.FC<ProductDetailProps> = ({
   product,
   onAddToCart,
+  onBuyNow,
   onBack,
 }) => {
   const [quantity, setQuantity] = useState(1);
@@ -21,12 +23,27 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Mock 4 images - replace with actual images when provided
-  const images = [
-    product.image,
-    'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1610601590819-4a88da23d58d?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1588405748855-07fd9e3ed0f0?auto=format&fit=crop&w=800&q=80',
-  ];
+  // Assign images based on product name (Crisp, Vibe, Eyes)
+  let images: string[] = [];
+  if (product.name.toLowerCase().includes('crisp')) {
+    images = [
+      '/Crispy (Male).jpeg',
+      '/crispy2.jpeg',
+      '/crispy3.png',
+    ];
+  } else if (product.name.toLowerCase().includes('vibe')) {
+    images = [
+      '/vibe (unisex).jpeg',
+      '/vibe2.jpeg',
+      '/vibe3.jpg',
+    ];
+  } else if (product.name.toLowerCase().includes('eyes')) {
+    images = [
+      '/Eyes (female).jpeg',
+    ];
+  } else {
+    images = [product.image];
+  }
 
   // Auto-scroll carousel every 5 seconds
   useEffect(() => {
@@ -117,7 +134,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
             ref={carouselRef}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="relative w-full aspect-square bg-black overflow-hidden"
+            className="relative w-full aspect-square bg-black overflow-hidden z-10 mt-[64px]"
           >
             <img
               src={images[currentImageIndex]}
@@ -258,7 +275,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
               >
                 ADD TO CART
               </button>
-              <button className="flex-1 py-4 bg-transparent border-2 border-gold text-gold font-bold tracking-widest rounded-sm hover:bg-gold/10 transition-colors">
+              <button
+                onClick={() => onBuyNow(quantity)}
+                className="flex-1 py-4 bg-transparent border-2 border-gold text-gold font-bold tracking-widest rounded-sm hover:bg-gold/10 transition-colors"
+              >
                 BUY NOW
               </button>
             </div>
@@ -270,7 +290,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
           {/* Left Column - Image */}
           <div>
             <div className="sticky top-20 flex flex-col gap-4">
-              <div className="relative w-full aspect-square bg-black rounded-lg overflow-hidden group">
+              <div className="relative w-full aspect-square bg-black rounded-lg overflow-hidden group z-10 mt-[64px]">
                 <img
                   src={images[currentImageIndex]}
                   alt={product.name}
@@ -397,7 +417,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
               >
                 ADD TO CART
               </button>
-              <button className="w-full py-4 bg-transparent border-2 border-gold text-gold font-bold tracking-widest rounded-sm hover:bg-gold/10 transition-colors">
+              <button
+                onClick={() => onBuyNow(quantity)}
+                className="w-full py-4 bg-transparent border-2 border-gold text-gold font-bold tracking-widest rounded-sm hover:bg-gold/10 transition-colors"
+              >
                 BUY NOW
               </button>
             </div>

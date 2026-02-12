@@ -164,7 +164,7 @@ export const DesktopPortal: React.FC = () => {
               <img 
                 alt="VIBE Fragrance Render" 
                 className="w-full h-auto scale-150 -translate-x-6 z-10 drop-shadow-[0_0_20px_rgba(234,179,8,0.3)] filter brightness-110 contrast-110 opacity-90" 
-                src="/vibe.jpeg"
+                src="/vibe (unisex).jpeg"
               />
             </div>
             

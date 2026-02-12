@@ -127,10 +127,11 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
             <div className="bg-black/40 rounded-xl p-3 border border-white/5 flex flex-col items-center relative group">
               <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#D4AF37]/50 group-hover:bg-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all"></div>
               <div className="h-24 w-full flex items-center justify-center mb-2 overflow-hidden">
-                <div className="w-8 h-20 bg-gradient-to-br from-gray-200 to-gray-400 rounded-sm relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')]"></div>
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-6 h-6 border border-black/20 rounded-full flex items-center justify-center text-[8px] font-cinzel text-black">Z</div>
-                </div>
+                <img
+                  src="/Crispy%20(Male).jpeg"
+                  alt="Crisp Bottle"
+                  className="w-12 h-20 object-contain rounded shadow-lg border border-gold/30 bg-black"
+                />
               </div>
               <h4 className="text-white font-cinzel text-sm tracking-wide">CRISP</h4>
               <p className="text-gray-400 text-[10px] text-center mt-1">Sharp & Modern</p>
@@ -140,10 +141,11 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
             <div className="bg-black/40 rounded-xl p-3 border border-white/5 flex flex-col items-center relative group">
               <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#D4AF37]/50 group-hover:bg-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all"></div>
               <div className="h-24 w-full flex items-center justify-center mb-2">
-                <div className="w-8 h-20 bg-gradient-to-br from-gray-800 to-black rounded-sm border border-gray-700 relative overflow-hidden">
-                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-gray-600 via-gray-900 to-black"></div>
-                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-6 h-6 border border-white/20 rounded-full flex items-center justify-center text-[8px] font-cinzel text-white">Z</div>
-                </div>
+                <img
+                  src="/vibe%20(unisex).jpeg"
+                  alt="Vibe Bottle"
+                  className="w-12 h-20 object-contain rounded shadow-lg border border-gold/30 bg-black"
+                />
               </div>
               <h4 className="text-white font-cinzel text-sm tracking-wide">VIBE</h4>
               <p className="text-gray-400 text-[10px] text-center mt-1">Deep & Magnetic</p>

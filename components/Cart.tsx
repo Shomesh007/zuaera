@@ -111,10 +111,13 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
 
                 <img 
                   src={
-                    item.series === "04" ? "/vibe.jpeg" :
-                    item.series === "01" ? "/CRISP.jpg" :
-                    item.series === "03" ? "/EYES.jpg" :
-                    item.series === "05" ? "/vibe_variant.jpg" :
+                    item.series === "04" ? "/vibe (unisex).jpeg" :
+                    item.series === "05" ? "/vibe2.jpeg" :
+                    item.series === "06" ? "/vibe3.jpg" :
+                    item.series === "03" ? "/Eyes (female).jpeg" :
+                    item.series === "01" ? "/Crispy (Male).jpeg" :
+                    item.series === "02" ? "/crispy2.jpeg" :
+                    item.series === "07" ? "/crispy3.png" :
                     item.image
                   }
                   alt={item.name}

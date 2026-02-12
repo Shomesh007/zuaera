@@ -3,10 +3,13 @@ import React, { useEffect } from 'react';
 // All images used throughout the app that should be preloaded
 const PRELOAD_IMAGES = [
   // Product images
-  '/CRISP.jpg',
-  '/EYES.jpg',
-  '/vibe.jpeg',
-  '/vibe_variant.jpg',
+  '/Crispy (Male).jpeg',
+  '/crispy2.jpeg',
+  '/crispy3.png',
+  '/Eyes (female).jpeg',
+  '/vibe (unisex).jpeg',
+  '/vibe2.jpeg',
+  '/vibe3.jpg',
   
   // Ingredient images
   '/mint.png',

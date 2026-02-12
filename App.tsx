@@ -87,8 +87,13 @@ const PRODUCTS: Product[] = [
     glowColor: "rgba(100, 255, 218, 0.2)",
     ingredients: [
       { name: "Mint", url: "/mint.png" },
+      { name: "Lemon", url: "" },
+      { name: "Basil", url: "" },
       { name: "Lavender", url: "/lavender.png" },
-      { name: "Musk", url: "/musk.png" }
+      { name: "Rosemary", url: "" },
+      { name: "Black Currant", url: "" },
+      { name: "Musk", url: "/musk.png" },
+      { name: "Vervain", url: "" }
     ]
   },
   {
@@ -110,7 +115,11 @@ const PRODUCTS: Product[] = [
     ingredients: [
       { name: "Vanilla", url: "/vanilla.png" },
       { name: "Jasmine", url: "/jasmine.png" },
-      { name: "Amber", url: "https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&w=300&q=80" }
+      { name: "Tonka Bean", url: "" },
+      { name: "Sugar", url: "" },
+      { name: "Amber", url: "https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&w=300&q=80" },
+      { name: "Musk", url: "/musk.png" },
+      { name: "Patchouli", url: "" }
     ]
   },
   {
@@ -130,22 +139,60 @@ const PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80",
     glowColor: "rgba(242,208,13,0.3)",
     ingredients: [
-      { name: "Saffron", url: "https://images.unsplash.com/photo-1623157879673-81e5b5c900e5?auto=format&fit=crop&w=300&q=80" },
-      { name: "Rose", url: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=300&q=80" },
-      { name: "Oud", url: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=300&q=80" }
+      { name: "Saffron", url: "/saffron.png" },
+      { name: "Bergamot", url: "" },
+      { name: "Bulgarian Rose", url: "" },
+      { name: "Oud", url: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=300&q=80" },
+      { name: "Tonka Bean", url: "" },
+      { name: "Oakmoss", url: "" },
+      { name: "Amber", url: "" },
+      { name: "Musk", url: "/musk.png" }
     ]
   }
 ];
 
-type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna';
+type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna' | 'checkout';
 
 const App: React.FC = () => {
   const isDesktop = useIsDesktop();
-  const [currentView, setCurrentView] = useState<View>('home');
+  const [currentView, setCurrentView] = useState<View>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('zuaera-view');
+      return (saved as View) || 'home';
+    }
+    return 'home';
+  });
   const [activeCategory, setActiveCategory] = useState('04 Vibe');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [toastProduct, setToastProduct] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('zuaera-selected-product');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
+  const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
+
+  // Persist current view to localStorage
+  useEffect(() => {
+    localStorage.setItem('zuaera-view', currentView);
+  }, [currentView]);
+
+  // Persist selected product to localStorage
+  useEffect(() => {
+    if (selectedProduct) {
+      localStorage.setItem('zuaera-selected-product', JSON.stringify(selectedProduct));
+    } else {
+      localStorage.removeItem('zuaera-selected-product');
+    }
+  }, [selectedProduct]);
 
   // Listen for bundle add event
   useEffect(() => {
@@ -298,7 +345,17 @@ const App: React.FC = () => {
             onAddToCart={(quantity) => {
               handleAddToCart(selectedProduct, '30ML', selectedProduct.price);
               setToastProduct(selectedProduct.name);
-              setCurrentView('collections');
+            }}
+            onBuyNow={(quantity) => {
+              const checkoutItem: CartItem = {
+                ...selectedProduct,
+                volume: '30ML',
+                price: selectedProduct.price,
+                quantity: quantity,
+                cartItemId: `${selectedProduct.id}-30ML`
+              };
+              setCheckoutItems([checkoutItem]);
+              setCurrentView('checkout');
             }}
             onBack={() => setCurrentView('collections')}
           />
@@ -323,6 +380,30 @@ const App: React.FC = () => {
           />
         )}
 
+        {currentView === 'checkout' && (
+          <Cart 
+            items={checkoutItems}
+            onUpdateQuantity={(cartItemId, delta) => {
+              setCheckoutItems(prev => {
+                return prev.map(item => {
+                  if (item.cartItemId === cartItemId) {
+                    const newQuantity = item.quantity + delta;
+                    return { ...item, quantity: newQuantity };
+                  }
+                  return item;
+                }).filter(item => item.quantity > 0);
+              });
+            }}
+            onRemove={(cartItemId) => {
+              setCheckoutItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
+            }}
+            onBrowseCollection={() => {
+              setCurrentView('product-detail');
+              setCheckoutItems([]);
+            }}
+          />
+        )}
+
         {currentView === 'scent-dna' && (
           <ScentDNA
             product={currentProduct}
@@ -342,8 +423,8 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global Bottom Navigation - Hidden on scent-dna and product-detail views as they have their own bottom bar */}
-      {currentView !== 'scent-dna' && currentView !== 'product-detail' && (
+      {/* Global Bottom Navigation - Hidden on scent-dna, product-detail and checkout views as they have their own bottom bar */}
+      {currentView !== 'scent-dna' && currentView !== 'product-detail' && currentView !== 'checkout' && (
         <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
       )}
     </div>
