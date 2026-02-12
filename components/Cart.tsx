@@ -6,6 +6,7 @@ interface CartProps {
   onUpdateQuantity: (cartItemId: string, delta: number) => void;
   onRemove: (cartItemId: string) => void;
   onBrowseCollection: () => void;
+  onCheckout?: () => void;
 }
 
 // Internal component for animating price changes
@@ -37,7 +38,7 @@ const AnimatedPrice: React.FC<{ value: number; className?: string }> = ({ value,
   );
 };
 
-export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, onBrowseCollection }) => {
+export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, onBrowseCollection, onCheckout }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -206,20 +207,31 @@ export const Cart: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove, o
               </div>
             </div>
 
-            <button
-              className="w-full bg-primary text-black h-12 rounded-full flex items-center justify-center gap-3 hover:bg-primary-dark transition-all duration-300 shadow-[0_0_20px_rgba(242,208,13,0.5)] hover:shadow-[0_0_30px_rgba(242,208,13,0.7)] group cursor-pointer active:scale-95"
-              onClick={() => {
-                const details = items.map(item =>
-                  `${item.name} (${item.volume}) x${item.quantity} - ₹${item.price * item.quantity}`
-                ).join("%0A");
-                const totalLine = `Total: ₹${total}`;
-                const msg = `Order Details:%0A${details}%0A${totalLine}`;
-                window.open(`https://wa.me/917092009114?text=${msg}`);
-              }}
-            >
-              <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">fingerprint</span>
-              <span className="text-xs font-bold tracking-[0.15em] uppercase">Checkout</span>
-            </button>
+            <div className="space-y-2">
+              {onCheckout && (
+                <button
+                  className="w-full bg-primary text-black h-12 rounded-full flex items-center justify-center gap-3 hover:bg-primary/90 transition-all duration-300 shadow-[0_0_20px_rgba(242,208,13,0.5)] hover:shadow-[0_0_30px_rgba(242,208,13,0.7)] group cursor-pointer active:scale-95 font-bold"
+                  onClick={onCheckout}
+                >
+                  <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">shopping_cart_checkout</span>
+                  <span className="text-xs font-bold tracking-[0.15em] uppercase">Checkout</span>
+                </button>
+              )}
+              <button
+                className="w-full bg-green-600 text-white h-12 rounded-full flex items-center justify-center gap-3 hover:bg-green-700 transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:shadow-[0_0_30px_rgba(34,197,94,0.5)] group cursor-pointer active:scale-95 font-bold"
+                onClick={() => {
+                  const details = items.map(item =>
+                    `${item.name} (${item.volume}) x${item.quantity} - ₹${item.price * item.quantity}`
+                  ).join("%0A");
+                  const totalLine = `Total: ₹${total}`;
+                  const msg = `Order Details:%0A${details}%0A${totalLine}`;
+                  window.open(`https://wa.me/917092009114?text=${msg}`);
+                }}
+              >
+                <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">whatsapp</span>
+                <span className="text-xs font-bold tracking-[0.15em] uppercase">WhatsApp</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

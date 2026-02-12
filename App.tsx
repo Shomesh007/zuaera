@@ -13,6 +13,9 @@ import { CartToast } from './components/CartToast';
 import { DesktopPortal } from './components/DesktopPortal';
 import { Collections } from './components/Collections';
 import { ProductDetail } from './components/ProductDetail';
+import { CheckoutForm, OrderDetails } from './components/CheckoutForm';
+import { AdminDashboard } from './components/AdminDashboard';
+import { AdminAuth } from './components/AdminAuth';
 
 // Desktop detection hook
 const useIsDesktop = () => {
@@ -151,7 +154,7 @@ const PRODUCTS: Product[] = [
   }
 ];
 
-type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna' | 'checkout';
+type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna' | 'checkout' | 'checkout-form' | 'admin-auth' | 'admin-dashboard';
 
 const App: React.FC = () => {
   const isDesktop = useIsDesktop();
@@ -179,6 +182,40 @@ const App: React.FC = () => {
     return null;
   });
   const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
+  const [orders, setOrders] = useState<OrderDetails[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('zuaera-orders');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+
+  // Check for /admin path
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (pathname === '/admin' || pathname === '/admin/') {
+      setCurrentView('admin-auth');
+    } else if (currentView === 'admin-auth' && !isAdminAuthenticated && pathname !== '/admin') {
+      // If on admin-auth but not authenticated and path changed, redirect
+      window.history.replaceState(null, '', '/');
+    }
+  }, []);
+
+  // Update URL when view changes
+  useEffect(() => {
+    if (isAdminAuthenticated && currentView === 'admin-dashboard') {
+      window.history.pushState(null, '', '/admin');
+    } else if (!isAdminAuthenticated && currentView !== 'admin-auth') {
+      window.history.replaceState(null, '', '/');
+    }
+  }, [currentView, isAdminAuthenticated]);
 
   // Persist current view to localStorage
   useEffect(() => {
@@ -193,6 +230,11 @@ const App: React.FC = () => {
       localStorage.removeItem('zuaera-selected-product');
     }
   }, [selectedProduct]);
+
+  // Persist orders to localStorage
+  useEffect(() => {
+    localStorage.setItem('zuaera-orders', JSON.stringify(orders));
+  }, [orders]);
 
   // Listen for bundle add event
   useEffect(() => {
@@ -293,6 +335,30 @@ const App: React.FC = () => {
     setCartItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
   };
 
+  const handleCheckoutComplete = (order: OrderDetails) => {
+    // Save order
+    setOrders(prev => [...prev, order]);
+    // Clear checkout items
+    setCheckoutItems([]);
+    // Clear cart items
+    setCartItems([]);
+    
+    // Send to WhatsApp with order details
+    const itemsList = order.items
+      .map(item => `${item.name} (${item.volume}) x${item.quantity} - ₹${(item.price * item.quantity).toLocaleString('en-IN')}`)
+      .join("%0A");
+    
+    const deliveryInfo = `%0A%0A📦 Delivery Details:%0A${order.delivery.firstName} ${order.delivery.lastName}%0A${order.delivery.address}${order.delivery.apartment ? '%0A' + order.delivery.apartment : ''}%0A${order.delivery.city}, ${order.delivery.state} ${order.delivery.pinCode}`;
+    
+    const msg = `🛍️ New Order #${order.id}%0A%0A${itemsList}%0A%0ASubtotal: ₹${(order.total / 1.08).toLocaleString('en-IN')}%0ATax: ₹${(order.total - order.total / 1.08).toLocaleString('en-IN')}%0A💰 Total: ₹${order.total.toLocaleString('en-IN')}${deliveryInfo}%0A%0n📧 Email: ${order.contact.email}`;
+    
+    window.open(`https://wa.me/917092009114?text=${msg}`);
+    
+    // Show success and redirect to home
+    setCurrentView('home');
+    setToastProduct('Order placed successfully!');
+  };
+
   const cartTotalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -355,7 +421,7 @@ const App: React.FC = () => {
                 cartItemId: `${selectedProduct.id}-30ML`
               };
               setCheckoutItems([checkoutItem]);
-              setCurrentView('checkout');
+              setCurrentView('checkout-form');
             }}
             onBack={() => setCurrentView('collections')}
           />
@@ -377,32 +443,49 @@ const App: React.FC = () => {
             onUpdateQuantity={handleUpdateQuantity}
             onRemove={handleRemoveFromCart}
             onBrowseCollection={() => setCurrentView('collections')}
+            onCheckout={() => {
+              if (cartItems.length > 0) {
+                setCheckoutItems(cartItems);
+                setCurrentView('checkout-form');
+              }
+            }}
           />
         )}
 
-        {currentView === 'checkout' && (
-          <Cart 
+        {currentView === 'checkout-form' && (
+          <CheckoutForm
             items={checkoutItems}
-            onUpdateQuantity={(cartItemId, delta) => {
-              setCheckoutItems(prev => {
-                return prev.map(item => {
-                  if (item.cartItemId === cartItemId) {
-                    const newQuantity = item.quantity + delta;
-                    return { ...item, quantity: newQuantity };
-                  }
-                  return item;
-                }).filter(item => item.quantity > 0);
-              });
+            onCheckoutComplete={handleCheckoutComplete}
+            onBack={() => setCurrentView('cart')}
+          />
+        )}
+
+        {currentView === 'admin-auth' && !isAdminAuthenticated && (
+          <AdminAuth
+            onAuthenticate={() => {
+              setIsAdminAuthenticated(true);
+              setCurrentView('admin-dashboard');
+              window.history.pushState(null, '', '/admin');
             }}
-            onRemove={(cartItemId) => {
-              setCheckoutItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
-            }}
-            onBrowseCollection={() => {
-              setCurrentView('product-detail');
-              setCheckoutItems([]);
+            onBack={() => {
+              setCurrentView('home');
+              window.history.replaceState(null, '', '/');
             }}
           />
         )}
+
+        {currentView === 'admin-dashboard' && isAdminAuthenticated && (
+          <AdminDashboard
+            orders={orders}
+            onLogout={() => {
+              setIsAdminAuthenticated(false);
+              setCurrentView('home');
+              window.history.replaceState(null, '', '/');
+            }}
+          />
+        )}
+
+
 
         {currentView === 'scent-dna' && (
           <ScentDNA
@@ -423,8 +506,8 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Global Bottom Navigation - Hidden on scent-dna, product-detail and checkout views as they have their own bottom bar */}
-      {currentView !== 'scent-dna' && currentView !== 'product-detail' && currentView !== 'checkout' && (
+      {/* Global Bottom Navigation - Hidden on scent-dna, product-detail, checkout-form, admin-auth, and admin-dashboard views */}
+      {currentView !== 'scent-dna' && currentView !== 'product-detail' && currentView !== 'checkout-form' && currentView !== 'admin-auth' && currentView !== 'admin-dashboard' && (
         <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
       )}
     </div>
