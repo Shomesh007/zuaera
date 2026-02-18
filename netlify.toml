@@ -1,0 +1,22 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Ensure correct Content-Type headers for SEO files
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    X-Robots-Tag = "nosnippet"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+
+# SPA fallback — static files (robots.txt, sitemap.xml, images, etc.)
+# are always served first before this rule is consulted.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

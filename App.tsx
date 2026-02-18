@@ -210,6 +210,10 @@ const App: React.FC = () => {
 
   // Update URL when view changes
   useEffect(() => {
+    // Don't rewrite URL for static file paths — let the server handle them
+    const staticPaths = ['/robots.txt', '/sitemap.xml'];
+    if (staticPaths.includes(window.location.pathname)) return;
+
     if (isAdminAuthenticated && currentView === 'admin-dashboard') {
       window.history.pushState(null, '', '/admin');
     } else if (!isAdminAuthenticated && currentView !== 'admin-auth') {
@@ -268,12 +272,17 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentView, isDesktop]);
 
-  // If on desktop, show the desktop portal page, but allow robots.txt and sitemap.xml
+  // If the browser somehow loaded the SPA on a static file path (robots.txt, sitemap.xml),
+  // force a hard reload so the server serves the actual static file instead of the SPA.
+  const staticFilePaths = ['/robots.txt', '/sitemap.xml'];
+  if (staticFilePaths.includes(window.location.pathname)) {
+    window.location.replace(window.location.pathname);
+    return null;
+  }
+
+  // If on desktop, show the desktop portal page
   if (isDesktop) {
-    const allowedPaths = ['/robots.txt', '/sitemap.xml'];
-    if (!allowedPaths.includes(window.location.pathname)) {
-      return <DesktopPortal />;
-    }
+    return <DesktopPortal />;
   }
 
   // Derive current product from active category or default to Vibe
