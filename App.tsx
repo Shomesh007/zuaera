@@ -268,9 +268,12 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentView, isDesktop]);
 
-  // If on desktop, show the desktop portal page
+  // If on desktop, show the desktop portal page, but allow robots.txt and sitemap.xml
   if (isDesktop) {
-    return <DesktopPortal />;
+    const allowedPaths = ['/robots.txt', '/sitemap.xml'];
+    if (!allowedPaths.includes(window.location.pathname)) {
+      return <DesktopPortal />;
+    }
   }
 
   // Derive current product from active category or default to Vibe
