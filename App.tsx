@@ -200,6 +200,10 @@ const App: React.FC = () => {
   // Check for /admin path
   useEffect(() => {
     const pathname = window.location.pathname;
+    // Don't interfere with static file paths
+    const staticPaths = ['/robots.txt', '/sitemap.xml'];
+    if (staticPaths.includes(pathname)) return;
+
     if (pathname === '/admin' || pathname === '/admin/') {
       setCurrentView('admin-auth');
     } else if (currentView === 'admin-auth' && !isAdminAuthenticated && pathname !== '/admin') {
@@ -272,11 +276,10 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentView, isDesktop]);
 
-  // If the browser somehow loaded the SPA on a static file path (robots.txt, sitemap.xml),
-  // force a hard reload so the server serves the actual static file instead of the SPA.
+  // If the SPA somehow loaded on a static file path, render nothing.
+  // The server should serve these files directly; this is a safety fallback.
   const staticFilePaths = ['/robots.txt', '/sitemap.xml'];
   if (staticFilePaths.includes(window.location.pathname)) {
-    window.location.replace(window.location.pathname);
     return null;
   }
 

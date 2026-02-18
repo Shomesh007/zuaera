@@ -16,6 +16,13 @@
 
 # SPA fallback — static files (robots.txt, sitemap.xml, images, etc.)
 # are always served first before this rule is consulted.
+
+# Common typo: /sitemaps.xml → /sitemap.xml
+[[redirects]]
+  from = "/sitemaps.xml"
+  to = "/sitemap.xml"
+  status = 301
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
