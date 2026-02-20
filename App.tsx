@@ -86,7 +86,7 @@ const PRODUCTS: Product[] = [
     ],
     price: 999,
     volume: "30ML",
-    image: "/CRISP.jpg",
+    image: "/crispy3.png",
     glowColor: "rgba(100, 255, 218, 0.2)",
     ingredients: [
       { name: "Mint", url: "/mint.png" },
@@ -113,7 +113,7 @@ const PRODUCTS: Product[] = [
     ],
     price: 999,
     volume: "30ML",
-    image: "/EYES.jpg",
+    image: "/Eyes%20(female).jpeg",
     glowColor: "rgba(236, 72, 153, 0.25)",
     ingredients: [
       { name: "Vanilla", url: "/vanilla.png" },
