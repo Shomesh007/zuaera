@@ -18,3 +18,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1i-DXIDkRNZiYyIj3NUWtJp
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deployment
+
+This project is now configured for deployment on [Vercel](https://vercel.com/). See [`vercel.json`](vercel.json) for rewrites and SPA routing. Remove any Netlify-specific instructions.

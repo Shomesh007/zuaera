@@ -225,9 +225,9 @@ export const DesktopPortal: React.FC = () => {
           <span className="text-[10px] font-mono text-white/30 tracking-[0.4em] uppercase">Location: 34.0522° N, 118.2437° W</span>
         </div>
         <div className="pointer-events-auto">
-          <a 
-            href="https://zuaera.netlify.app" 
-            target="_blank" 
+          <a
+            href="https://zuaera.vercel.app"
+            target="_blank"
             rel="noopener noreferrer"
             className="bg-primary text-black px-6 py-2 rounded-full font-mono text-[10px] font-bold tracking-[0.3em] uppercase flex items-center gap-3 border-glow transition-transform hover:scale-105"
           >

@@ -1,5 +1,7 @@
 # Netlify Deployment Checklist
 
+> **Note:** This file is obsolete. The project is now configured for deployment on Vercel. See [`vercel.json`](../../vercel.json).
+
 - All static assets (images, video) are in the `/public` directory and referenced with relative paths.
 - `vite.config.ts` does not use server-only config and aliases are compatible with Netlify static hosting.
 - `package.json` contains correct build (`vite build`) and preview (`vite preview`) scripts.
