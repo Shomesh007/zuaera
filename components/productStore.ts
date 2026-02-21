@@ -20,6 +20,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         volume: "30ML",
         image: "/crispy3.png",
         glowColor: "rgba(100, 255, 218, 0.2)",
+        targetAudience: "Male",
         ingredients: [
             { name: "Mint", url: "/mint.png" },
             { name: "Lemon", url: "" },
@@ -47,6 +48,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         volume: "30ML",
         image: "/Eyes%20(female).jpeg",
         glowColor: "rgba(236, 72, 153, 0.25)",
+        targetAudience: "Female",
         ingredients: [
             { name: "Vanilla", url: "/vanilla.png" },
             { name: "Jasmine", url: "/jasmine.png" },
@@ -73,6 +75,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
         volume: "30ML",
         image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80",
         glowColor: "rgba(242,208,13,0.3)",
+        targetAudience: "Unisex",
         ingredients: [
             { name: "Saffron", url: "/saffron.png" },
             { name: "Bergamot", url: "" },

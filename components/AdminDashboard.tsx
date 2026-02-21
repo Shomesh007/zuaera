@@ -20,6 +20,7 @@ function emptyProduct(): Product {
     series: '',
     name: '',
     navLabel: '',
+    targetAudience: '',
     tags: [],
     description: '',
     tagline: '',
@@ -332,7 +333,10 @@ const ProductEditor: React.FC<ProductEditorProps> = ({ product, onSave, onClose,
                 {field('Name', 'name')}
                 {field('Series / Number', 'series')}
               </div>
-              {field('Nav Label (e.g. 01 Crisp)', 'navLabel')}
+              <div className="grid grid-cols-2 gap-3">
+                {field('Nav Label (e.g. 01 Crisp)', 'navLabel')}
+                {field('Target Audience', 'targetAudience')}
+              </div>
               {field('Tagline', 'tagline')}
               {field('Description', 'description', 'textarea')}
             </div>

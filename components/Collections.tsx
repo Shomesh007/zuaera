@@ -81,44 +81,45 @@ const ProductCard: React.FC<ProductCardProps> = ({
       }}
     >
       {/* Image Container */}
-      <div
-        className="relative w-full aspect-square overflow-hidden bg-black cursor-pointer"
-        onClick={onProductClick}
-      >
+      <div className="relative w-full h-[300px] flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-700">
         <img
           src={
             product.name.toLowerCase().includes('crisp') ? '/Crispy (Male).jpeg' :
-            product.name.toLowerCase().includes('vibe') ? '/vibe (unisex).jpeg' :
-            product.name.toLowerCase().includes('eyes') ? '/Eyes (female).jpeg' :
-            product.image
+              product.name.toLowerCase().includes('vibe') ? '/vibe (unisex).jpeg' :
+                product.name.toLowerCase().includes('eyes') ? '/Eyes (female).jpeg' :
+                  product.image
           }
           alt={product.name}
-          className={`w-full h-full object-cover transition-transform duration-500 ${
-            isHovered ? 'scale-110' : 'scale-100'
-          }`}
+          className={`w-auto h-[90%] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] transition-all duration-700 ${isHovered ? 'scale-110 -translate-y-4' : 'scale-100'}`}
         />
-        
-        {/* Gold Glow Overlay on Hover */}
-        {isHovered && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at center, rgba(242, 208, 13, 0.1), transparent)',
-              animation: 'pulse 2s infinite',
-            }}
-          ></div>
-        )}
       </div>
+
+      {/* Gold Glow Overlay on Hover */}
+      {isHovered && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle at center, rgba(242, 208, 13, 0.1), transparent)',
+            animation: 'pulse 2s infinite',
+          }}
+        ></div>
+      )}
 
       {/* Content Container */}
       <div className="p-4 md:p-6 flex flex-col gap-3">
         {/* Product Name */}
-        <h3
-          className="text-lg md:text-xl font-light tracking-wider text-gold cursor-pointer transition-colors hover:text-yellow-300"
-          onClick={onProductClick}
-        >
-          {product.name}
-        </h3>
+        <div className="flex flex-col cursor-pointer" onClick={onProductClick}>
+          <h3
+            className="text-lg md:text-xl font-light tracking-wider text-gold transition-colors hover:text-yellow-300"
+          >
+            {product.name}
+          </h3>
+          {product.targetAudience && (
+            <span className="text-[10px] md:text-xs text-gold/60 uppercase tracking-[0.2em] mt-1 font-medium">
+              ({product.targetAudience})
+            </span>
+          )}
+        </div>
 
         {/* Description */}
         <p className="text-xs md:text-sm text-gray-300 line-clamp-2 leading-relaxed">
@@ -136,11 +137,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             e.stopPropagation();
             onProductClick();
           }}
-          className={`w-full py-3 mt-2 font-semibold text-sm tracking-widest transition-all duration-300 rounded-sm relative overflow-hidden group/btn ${
-            isHovered
-              ? 'bg-gold text-black shadow-lg shadow-gold/50'
-              : 'bg-gradient-to-r from-gold/80 to-yellow-500/80 text-black hover:from-gold hover:to-yellow-500'
-          }`}
+          className={`w-full py-3 mt-2 font-semibold text-sm tracking-widest transition-all duration-300 rounded-sm relative overflow-hidden group/btn ${isHovered
+            ? 'bg-gold text-black shadow-lg shadow-gold/50'
+            : 'bg-gradient-to-r from-gold/80 to-yellow-500/80 text-black hover:from-gold hover:to-yellow-500'
+            }`}
           style={{
             background: isHovered
               ? 'linear-gradient(90deg, #f2d00d, #ffd700, #f2d00d)'

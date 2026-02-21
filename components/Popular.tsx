@@ -52,7 +52,7 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
         <button className="text-white hover:text-[#D4AF37] transition-colors">
           <span className="material-icons">menu</span>
         </button>
-        <div 
+        <div
           onClick={onTitleClick}
           className="text-[#D4AF37] font-cinzel font-bold text-2xl tracking-widest cursor-pointer hover:text-white transition-colors"
         >
@@ -71,9 +71,9 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
       <main className="relative h-[65vh] w-full">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <img 
-            alt="Intimate couple profile view in black and white with dramatic lighting" 
-            className="w-full h-full object-cover opacity-80" 
+          <img
+            alt="Intimate couple profile view in black and white with dramatic lighting"
+            className="w-full h-full object-cover opacity-80"
             loading="eager"
             decoding="async"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi4Gsd6chh_JFbztTkrBXwjy4DZqBnQPv0gOwkEPd2AS-qlkW9M16rNoa30WwS5jiLS4HHO_a1xZF9dzZUJWPN2Lv3oAooc7cI6EPZ6AOgbjg02Ix3Be5G8673RYUpqAhqiVH8n4KqKsV2Z-CAM4Gnod-HKQ8pyGNIJtBdAGcd6Panq_oLUsCPfuJKHnWxRGj5ivB0tBeUdmikPbSavQGmo3LQCAg8rbEePj7KT_QZRPKKDQF6HSEU3klJ0F94icPpzh_XGld9flMN"
@@ -95,7 +95,7 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
         <div className="absolute bottom-10 left-0 w-full z-20 px-6 text-center">
           <span className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase mb-3 block">Chemistry Series</span>
           <h1 className="text-4xl md:text-5xl font-cinzel text-white mb-2 leading-tight">
-            The Art of<br/>
+            The Art of<br />
             <span className="text-[#D4AF37] italic font-serif">Attraction</span>
           </h1>
           <p className="text-gray-300 text-sm font-light leading-relaxed max-w-xs mx-auto mb-6">
@@ -133,7 +133,9 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
                   className="w-12 h-20 object-contain rounded shadow-lg border border-gold/30 bg-black"
                 />
               </div>
-              <h4 className="text-white font-cinzel text-sm tracking-wide">CRISP</h4>
+              <h4 className="text-white font-cinzel text-sm tracking-wide flex flex-col items-center">
+                CRISP <span className="text-[8px] text-[#D4AF37]/70 font-sans tracking-[0.2em] mt-0.5">(Male)</span>
+              </h4>
               <p className="text-gray-400 text-[10px] text-center mt-1">Sharp & Modern</p>
             </div>
 
@@ -147,7 +149,9 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
                   className="w-12 h-20 object-contain rounded shadow-lg border border-gold/30 bg-black"
                 />
               </div>
-              <h4 className="text-white font-cinzel text-sm tracking-wide">VIBE</h4>
+              <h4 className="text-white font-cinzel text-sm tracking-wide flex flex-col items-center">
+                VIBE <span className="text-[8px] text-[#D4AF37]/70 font-sans tracking-[0.2em] mt-0.5">(Unisex)</span>
+              </h4>
               <p className="text-gray-400 text-[10px] text-center mt-1">Deep & Magnetic</p>
             </div>
           </div>

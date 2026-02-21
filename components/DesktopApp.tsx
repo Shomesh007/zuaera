@@ -113,19 +113,10 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                     {/* Center Imagery */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 overflow-visible mt-10">
                         <div className="relative w-[800px] h-[800px] flex items-center justify-center">
-                            {/* Main sharp bottle */}
                             <img
-                                key={activeProduct.id}
-                                src={getMainImage(activeProduct.image)}
-                                alt={activeProduct.name}
-                                className="absolute z-20 h-[65%] max-w-full object-contain animate-float drop-shadow-[0_40px_50px_rgba(0,0,0,0.8)]"
-                            />
-                            {/* Secondary blurred/echo bottle (shifted back and left) */}
-                            <img
-                                key={`${activeProduct.id}-echo`}
-                                src={getMainImage(activeProduct.image)}
-                                alt={activeProduct.name}
-                                className="absolute z-10 h-[50%] max-w-full object-contain -translate-x-[200px] translate-y-[60px] opacity-40 blur-[3px] animate-float-delayed drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)] rotate-[-5deg]"
+                                src="/crispy3.png"
+                                alt="Zuaera Luxury Perfume"
+                                className="h-[700px] object-contain drop-shadow-[0_40px_60px_rgba(0,0,0,0.9)] z-20 animate-float-slow transition-transform duration-1000"
                             />
                         </div>
                     </div>
@@ -137,7 +128,12 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                                 ₹{activeProduct.price.toLocaleString('en-IN')}
                             </h2>
                             <div className="flex justify-between items-center w-full mb-8 border-b border-[#f2d00d]/20 pb-4">
-                                <p className="text-xl text-white/90 tracking-[0.15em] font-semibold uppercase">{activeProduct.name}</p>
+                                <div className="flex flex-col">
+                                    <p className="text-xl text-white/90 tracking-[0.15em] font-semibold uppercase">{activeProduct.name}</p>
+                                    {activeProduct.targetAudience && (
+                                        <p className="text-[11px] text-[#f2d00d]/60 uppercase tracking-[0.2em] font-medium mt-1">({activeProduct.targetAudience})</p>
+                                    )}
+                                </div>
                             </div>
 
                             <p className="text-[15px] text-white/75 leading-[1.8] mb-10 font-light">
@@ -159,6 +155,65 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                         </div>
                     </div>
                 </main>
+
+                <section id="products" className="min-h-screen shrink-0 relative z-20 bg-[#0a0905] py-32 flex flex-col items-center justify-center snap-start">
+                    <div className="relative text-center w-full flex justify-center items-center mb-40">
+                        <span className="absolute text-[140px] md:text-[220px] font-bold tracking-[0.1em] uppercase opacity-[0.03] pointer-events-none select-none z-0 text-white translate-y-[-10%]">
+                            Essence
+                        </span>
+                        <h2 className="text-white text-5xl md:text-7xl font-bold relative z-10 tracking-[0.05em] drop-shadow-2xl">
+                            Find your <span className="text-[#f2d00d]">Signature</span>
+                        </h2>
+                    </div>
+
+                    <div className="flex flex-wrap gap-12 xl:gap-16 justify-center items-center w-full max-w-[1500px] mx-auto px-8 relative z-10">
+                        {products.map((product) => (
+                            <div key={product.id} className="w-[360px] h-[640px] bg-gradient-to-b from-[#181711] to-[#12110a] rounded-[180px] flex flex-col items-center p-12 hover:-translate-y-6 transition-all duration-700 hover:shadow-[0_45px_90px_rgba(0,0,0,0.7),0_0_30px_rgba(242,208,13,0.05)] border border-white/5 hover:border-[#f2d00d]/20 group relative overflow-hidden backdrop-blur-sm">
+                                {/* Dynamic Background Glow on Hover */}
+                                <div
+                                    className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-1000 pointer-events-none blur-[60px]"
+                                    style={{
+                                        background: `radial-gradient(circle at 50% 40%, ${product.glowColor || 'rgba(242,208,13,0.3)'} 0%, transparent 70%)`
+                                    }}
+                                />
+
+                                <div className="h-[420px] w-full flex items-center justify-center mb-6 relative overflow-hidden rounded-t-[160px]">
+                                    {/* Transparent container, no frame */}
+                                    <img
+                                        src={product.name === 'CRISP' ? '/crispy_display.png' : product.name === 'EYES' ? '/eyes_display.png' : '/vibe_display.png'}
+                                        alt={`${product.name} Display`}
+                                        className={`w-full h-full object-cover object-top drop-shadow-[0_40px_40px_rgba(0,0,0,0.8)] transition-all duration-700 group-hover:scale-115 relative z-10 ${product.name === 'CRISP' ? '-translate-y-10 scale-110' :
+                                                product.name === 'VIBE' ? '-translate-y-6 scale-110' :
+                                                    'translate-y-4'
+                                            }`}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col items-center mb-6 relative z-20">
+                                    <h3 className="text-3xl font-bold text-white tracking-widest uppercase transition-colors duration-500 group-hover:text-[#f2d00d]">
+                                        {product.name}
+                                    </h3>
+                                    {product.targetAudience && (
+                                        <span className="text-[12px] uppercase tracking-[0.3em] text-[#f2d00d]/60 mt-2 font-bold group-hover:text-[#f2d00d] transition-colors duration-500">
+                                            {product.targetAudience}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <p className="text-[14px] text-white/40 text-center leading-[1.8] h-[75px] overflow-hidden line-clamp-3 px-4 relative z-20 font-light group-hover:text-white/70 transition-colors duration-500">
+                                    {product.description}
+                                </p>
+
+                                <button
+                                    onClick={() => handleAddToCartClick(product)}
+                                    className="mt-auto mb-4 bg-transparent border border-[#f2d00d]/30 rounded-full px-12 py-4 text-[12px] uppercase tracking-[0.2em] text-[#f2d00d] hover:bg-[#f2d00d] hover:text-black hover:border-[#f2d00d] transition-all duration-500 font-bold relative z-20 hover:shadow-[0_0_20px_rgba(242,208,13,0.3)]"
+                                >
+                                    Explore More
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </section>
 
                 {/* ZUAERA IS Section */}
                 <section id="zuaera-is" className="min-h-screen shrink-0 py-32 px-12 relative z-20 border-t border-[#f2d00d]/10 bg-[#0a0905] flex items-center justify-center snap-start">
@@ -239,10 +294,10 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                             <div className="absolute left-[15%] top-[10%] w-[350px] h-[350px] border-2 border-[#f2d00d]/40 z-0"></div>
 
                             {/* Top Left Image (Men's focus) */}
-                            <div className="absolute left-0 top-[5%] w-[320px] h-[320px] bg-[#0c0b07] border border-[#f2d00d]/20 z-10 shadow-2xl p-4 overflow-hidden group">
+                            <div className="absolute left-[-10%] top-0 w-[340px] h-[340px] bg-[#0c0b07] border border-[#f2d00d]/20 z-10 shadow-2xl p-4 overflow-hidden group">
                                 <img
-                                    src="/bundle-mens.png"
-                                    alt="Zuaera Men's Fragrance"
+                                    src="/crispy_bundle.png"
+                                    alt="Zuaera Crispy Bundle"
                                     className="w-full h-full object-cover rounded-sm group-hover:scale-105 transition-transform duration-700"
                                 />
                                 {/* Subtle overlay for depth */}
@@ -250,10 +305,10 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                             </div>
 
                             {/* Bottom Right Image (Women's focus) */}
-                            <div className="absolute left-[20%] top-[35%] w-[380px] h-[380px] bg-[#0c0b07] border border-[#f2d00d]/30 z-20 shadow-[0_30px_60px_rgba(0,0,0,0.9)] p-4 overflow-hidden group">
+                            <div className="absolute left-[22%] top-[38%] w-[400px] h-[400px] bg-[#0c0b07] border border-[#f2d00d]/30 z-20 shadow-[0_30px_60px_rgba(0,0,0,0.9)] p-4 overflow-hidden group">
                                 <img
-                                    src="/bundle-womens.png"
-                                    alt="Zuaera Women's Fragrance"
+                                    src="/eyes_bundle.png"
+                                    alt="Zuaera Eyes Bundle"
                                     className="w-full h-full object-cover rounded-sm group-hover:scale-105 transition-transform duration-700"
                                 />
                                 {/* Wet/Rain effect overlay mimic */}

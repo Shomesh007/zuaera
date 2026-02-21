@@ -65,6 +65,7 @@ export interface Product {
   image: string;
   volume: string;
   glowColor: string;
+  targetAudience?: string;
 }
 
 export interface CartItem extends Product {
