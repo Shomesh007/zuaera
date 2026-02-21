@@ -10,12 +10,13 @@ import { Cart } from './components/Cart';
 import { ScentDNA } from './components/ScentDNA';
 import { ImagePreloader } from './components/ImagePreloader';
 import { CartToast } from './components/CartToast';
-import { DesktopPortal } from './components/DesktopPortal';
+import { DesktopApp } from './components/DesktopApp';
 import { Collections } from './components/Collections';
 import { ProductDetail } from './components/ProductDetail';
 import { CheckoutForm, OrderDetails } from './components/CheckoutForm';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminAuth } from './components/AdminAuth';
+import { loadProducts } from './components/productStore';
 
 // Desktop detection hook
 const useIsDesktop = () => {
@@ -25,14 +26,14 @@ const useIsDesktop = () => {
     const checkDesktop = () => {
       // Check screen width (768px is typical tablet/desktop breakpoint)
       const isWideScreen = window.innerWidth >= 768;
-      
+
       // Check if it's a touch device (most mobile devices have touch)
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      
+
       // Check user agent for mobile indicators
       const mobileKeywords = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
       const isMobileUA = mobileKeywords.test(navigator.userAgent);
-      
+
       // Consider desktop if: wide screen AND (not a touch-only device OR not mobile UA)
       // This allows tablets in landscape to still access mobile, but blocks true desktops
       setIsDesktop(isWideScreen && !isMobileUA);
@@ -71,93 +72,13 @@ export interface CartItem extends Product {
   cartItemId: string; // Composite key: id + volume
 }
 
-const PRODUCTS: Product[] = [
-  {
-    id: "01",
-    series: "01",
-    name: "CRISP",
-    navLabel: "01 Crisp",
-    tags: ["Fresh", "Green", "Clean", "Uplifting"],
-    description: "CRISP is sharp and refreshing, opening with bright citrus and herbs, then settling into a clean, green calm. It feels modern, clear-headed, and effortlessly fresh.",
-    tagline: "The architecture of morning light.",
-    highlights: [
-      { label: "Family", value: "Citrus Green", icon: "eco" },
-      { label: "Sillage", value: "Fresh / Airy", icon: "air" }
-    ],
-    price: 999,
-    volume: "30ML",
-    image: "/crispy3.png",
-    glowColor: "rgba(100, 255, 218, 0.2)",
-    ingredients: [
-      { name: "Mint", url: "/mint.png" },
-      { name: "Lemon", url: "" },
-      { name: "Basil", url: "" },
-      { name: "Lavender", url: "/lavender.png" },
-      { name: "Rosemary", url: "" },
-      { name: "Black Currant", url: "" },
-      { name: "Musk", url: "/musk.png" },
-      { name: "Vervain", url: "" }
-    ]
-  },
-  {
-    id: "03",
-    series: "03",
-    name: "EYES",
-    navLabel: "03 Eyes",
-    tags: ["Warm", "Sweet", "Intimate", "Sensual"],
-    description: "EYES is soft and inviting, built around warmth and sweetness. It sits close to the skin, comforting yet seductive, designed for quiet confidence rather than attention.",
-    tagline: "The silence between heartbeats.",
-    highlights: [
-      { label: "Character", value: "Skin Scent", icon: "fingerprint" },
-      { label: "Texture", value: "Velvet / Warm", icon: "texture" }
-    ],
-    price: 999,
-    volume: "30ML",
-    image: "/Eyes%20(female).jpeg",
-    glowColor: "rgba(236, 72, 153, 0.25)",
-    ingredients: [
-      { name: "Vanilla", url: "/vanilla.png" },
-      { name: "Jasmine", url: "/jasmine.png" },
-      { name: "Tonka Bean", url: "" },
-      { name: "Sugar", url: "" },
-      { name: "Amber", url: "https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&w=300&q=80" },
-      { name: "Musk", url: "/musk.png" },
-      { name: "Patchouli", url: "" }
-    ]
-  },
-  {
-    id: "04",
-    series: "04",
-    name: "VIBE",
-    navLabel: "04 Vibe",
-    tags: ["Deep", "Woody", "Luxurious", "Gold"],
-    description: "VIBE is rich and immersive, opening with spice and citrus before revealing a dark floral heart. It feels bold, grounded, and memorable.",
-    tagline: "The molecular architecture of liquid sun.",
-    highlights: [
-      { label: "Longevity", value: "12+ Hours", icon: "history" },
-      { label: "Molecular", value: "ISO E Super+", icon: "science" }
-    ],
-    price: 999,
-    volume: "30ML",
-    image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80",
-    glowColor: "rgba(242,208,13,0.3)",
-    ingredients: [
-      { name: "Saffron", url: "/saffron.png" },
-      { name: "Bergamot", url: "" },
-      { name: "Bulgarian Rose", url: "" },
-      { name: "Oud", url: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=300&q=80" },
-      { name: "Tonka Bean", url: "" },
-      { name: "Oakmoss", url: "" },
-      { name: "Amber", url: "" },
-      { name: "Musk", url: "/musk.png" }
-    ]
-  }
-];
+
 
 type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna' | 'checkout' | 'checkout-form' | 'admin-auth' | 'admin-dashboard';
 
 const App: React.FC = () => {
   const isDesktop = useIsDesktop();
+  const [products, setProducts] = useState<Product[]>(() => loadProducts());
   const [currentView, setCurrentView] = useState<View>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('zuaera-view');
@@ -248,8 +169,8 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isDesktop) return; // Skip on desktop
     const handler = () => {
-      const crisp = PRODUCTS.find(p => p.id === "01");
-      const vibe = PRODUCTS.find(p => p.id === "04");
+      const crisp = products.find(p => p.id === "01");
+      const vibe = products.find(p => p.id === "04");
       if (crisp && vibe) {
         // Add both only if not already in cart
         setCartItems(prev => {
@@ -257,10 +178,10 @@ const App: React.FC = () => {
           const crispKey = `${crisp.id}-30ML`;
           const vibeKey = `${vibe.id}-30ML`;
           if (!updated.find(i => i.cartItemId === crispKey)) {
-            updated.push({ ...crisp, volume: "30ML", price: 999, quantity: 1, cartItemId: crispKey });
+            updated.push({ ...crisp, volume: "30ML", price: crisp.price, quantity: 1, cartItemId: crispKey });
           }
           if (!updated.find(i => i.cartItemId === vibeKey)) {
-            updated.push({ ...vibe, volume: "30ML", price: 999, quantity: 1, cartItemId: vibeKey });
+            updated.push({ ...vibe, volume: "30ML", price: vibe.price, quantity: 1, cartItemId: vibeKey });
           }
           return updated;
         });
@@ -268,7 +189,7 @@ const App: React.FC = () => {
     };
     window.addEventListener('add-bundle-to-cart', handler);
     return () => window.removeEventListener('add-bundle-to-cart', handler);
-  }, [isDesktop]);
+  }, [isDesktop, products]);
 
   // Scroll to top instantly when view changes to prevent "extra scroll" issues
   useEffect(() => {
@@ -283,53 +204,34 @@ const App: React.FC = () => {
     return null;
   }
 
-  // If on desktop, show the desktop portal page
-  if (isDesktop) {
-    return <DesktopPortal />;
-  }
+  // Admin bypass - allow desktop users to access the admin panel normally
+  const isAdminView = window.location.pathname.startsWith('/admin') || currentView === 'admin-auth' || currentView === 'admin-dashboard';
 
-  // Derive current product from active category or default to Vibe
-  const currentProduct = PRODUCTS.find(p => p.navLabel === activeCategory) || PRODUCTS[3];
-  
-  // Get all category labels for header
-  const categories = PRODUCTS.map(p => p.navLabel);
-
-  // Pricing Logic Helper
-  const getPricing = (product: Product) => {
-    const is50 = product.volume === '50ML';
-    // Logic: If default is 50ml, 100ml is ~1.8x. If default is 100ml, 50ml is ~0.6x
-    const price50 = is50 ? product.price : Math.ceil((product.price * 0.6) / 100) * 100 - 1;
-    const price100 = !is50 ? product.price : Math.ceil((product.price * 1.8) / 100) * 100 - 1;
-    return { "50ML": price50, "100ML": price100 };
-  };
-
-  const currentPrices = getPricing(currentProduct);
-
-  // Cart Logic
+  // Cart Handlers
   const handleAddToCart = (product: Product, volume: string, price: number) => {
     const newItemKey = `${product.id}-${volume}`;
 
     setCartItems(prev => {
       const existing = prev.find(item => item.cartItemId === newItemKey);
       if (existing) {
-        return prev.map(item => 
+        return prev.map(item =>
           item.cartItemId === newItemKey
-            ? { ...item, quantity: item.quantity + 1 } 
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
       return [
-        ...prev, 
-        { 
-          ...product, 
-          volume, 
-          price, 
-          quantity: 1, 
-          cartItemId: newItemKey 
+        ...prev,
+        {
+          ...product,
+          volume,
+          price,
+          quantity: 1,
+          cartItemId: newItemKey
         }
       ];
     });
-    
+
     // Show toast notification
     setToastProduct(product.name);
   };
@@ -357,48 +259,79 @@ const App: React.FC = () => {
     setCheckoutItems([]);
     // Clear cart items
     setCartItems([]);
-    
+
     // Send to WhatsApp with order details
     const itemsList = order.items
       .map(item => `${item.name} (${item.volume}) x${item.quantity} - ₹${(item.price * item.quantity).toLocaleString('en-IN')}`)
       .join("%0A");
-    
+
     const deliveryInfo = `%0A%0A📦 Delivery Details:%0A${order.delivery.firstName} ${order.delivery.lastName}%0A${order.delivery.address}${order.delivery.apartment ? '%0A' + order.delivery.apartment : ''}%0A${order.delivery.city}, ${order.delivery.state} ${order.delivery.pinCode}`;
-    
+
     const msg = `🛍️ New Order #${order.id}%0A%0A${itemsList}%0A%0ASubtotal: ₹${(order.total / 1.08).toLocaleString('en-IN')}%0ATax: ₹${(order.total - order.total / 1.08).toLocaleString('en-IN')}%0A💰 Total: ₹${order.total.toLocaleString('en-IN')}${deliveryInfo}%0A%0n📧 Email: ${order.contact.email}`;
-    
+
     window.open(`https://wa.me/917092009114?text=${msg}`);
-    
+
     // Show success and redirect to home
     setCurrentView('home');
     setToastProduct('Order placed successfully!');
   };
+
+  // If on desktop and not in admin, show the immersive futuristic desktop app
+  if (isDesktop && !isAdminView) {
+    return (
+      <DesktopApp
+        products={products}
+        cartItems={cartItems}
+        onAddToCart={handleAddToCart}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveFromCart={handleRemoveFromCart}
+        onCheckoutComplete={handleCheckoutComplete}
+      />
+    );
+  }
+
+  // Derive current product from active category or default to last product
+  const currentProduct = products.find(p => p.navLabel === activeCategory) || products[products.length - 1] || products[0];
+
+  // Get all category labels for header
+  const categories = products.map(p => p.navLabel);
+
+  // Pricing Logic Helper
+  const getPricing = (product: Product) => {
+    const is50 = product.volume === '50ML';
+    // Logic: If default is 50ml, 100ml is ~1.8x. If default is 100ml, 50ml is ~0.6x
+    const price50 = is50 ? product.price : Math.ceil((product.price * 0.6) / 100) * 100 - 1;
+    const price100 = !is50 ? product.price : Math.ceil((product.price * 1.8) / 100) * 100 - 1;
+    return { "50ML": price50, "100ML": price100 };
+  };
+
+  const currentPrices = getPricing(currentProduct);
 
   const cartTotalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="relative min-h-[100dvh] w-full flex flex-col bg-background-dark pb-24">
       {/* Cart Toast Notification */}
-      <CartToast 
-        productName={toastProduct || ''} 
-        isVisible={!!toastProduct} 
-        onClose={() => setToastProduct(null)} 
+      <CartToast
+        productName={toastProduct || ''}
+        isVisible={!!toastProduct}
+        onClose={() => setToastProduct(null)}
       />
-      
+
       {/* Global Header - Hidden on Popular and Product Detail views as they have their own custom header */}
       {currentView !== 'popular' && currentView !== 'product-detail' && (
-        <Header 
+        <Header
           title="ZUAERA"
           showCategories={currentView === 'collections'}
           categories={categories}
-          activeCategory={activeCategory} 
-          onCategorySelect={setActiveCategory} 
+          activeCategory={activeCategory}
+          onCategorySelect={setActiveCategory}
           onCartClick={() => setCurrentView('cart')}
           onTitleClick={() => setCurrentView('home')}
           cartCount={cartTotalItems}
         />
       )}
-      
+
       {/* Main Content Area */}
       <main className="flex-1 w-full">
         {currentView === 'home' && (
@@ -410,8 +343,8 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'collections' && (
-          <Collections 
-            products={PRODUCTS}
+          <Collections
+            products={products}
             onProductSelect={(product) => {
               setSelectedProduct(product);
               setCurrentView('product-detail');
@@ -453,7 +386,7 @@ const App: React.FC = () => {
         )}
 
         {currentView === 'cart' && (
-          <Cart 
+          <Cart
             items={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
             onRemove={handleRemoveFromCart}
@@ -497,12 +430,13 @@ const App: React.FC = () => {
               setCurrentView('home');
               window.history.replaceState(null, '', '/');
             }}
+            onProductsChange={(updated) => setProducts(updated)}
           />
         )}
 
 
 
-        {currentView === 'scent-dna' && (
+        {currentView === 'scent-dna' && currentProduct && (
           <ScentDNA
             product={currentProduct}
             price={currentProduct.price}
@@ -513,10 +447,10 @@ const App: React.FC = () => {
             }}
           />
         )}
-        
+
         {currentView === 'about' && (
           <div className="pt-20 animate-fade-in">
-             <About />
+            <About />
           </div>
         )}
       </main>

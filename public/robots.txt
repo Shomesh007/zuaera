@@ -1,8 +1,89 @@
 # ZUAERA Perfumes - robots.txt
 # https://zuaera.com
+# Updated: February 2026
 
+# -----------------------------------------------
+# Traditional Search Engine Crawlers
+# -----------------------------------------------
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# -----------------------------------------------
+# AI / LLM Crawlers (Critical for AEO in 2026)
+# Allow all AI models to crawl and cite ZUAERA
+# -----------------------------------------------
+
+# OpenAI / ChatGPT
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic / Claude
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Amazon Alexa / Rufus
+User-agent: Amazonbot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# ByteDance (TikTok AI)
+User-agent: Bytespider
+Allow: /
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+
+# Apple Bot
+User-agent: Applebot
+Allow: /
+
+# Common Crawler (used by researchers & AI training)
+User-agent: CCBot
+Allow: /
+
+# -----------------------------------------------
+# Allow all other bots
+# -----------------------------------------------
 User-agent: *
 Allow: /
 
-# Sitemap location
+# -----------------------------------------------
+# Sitemaps
+# -----------------------------------------------
 Sitemap: https://zuaera.com/sitemap.xml
