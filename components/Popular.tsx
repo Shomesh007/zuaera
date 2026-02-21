@@ -117,8 +117,8 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
               <p className="text-gray-400 text-xs mt-1">Perfectly paired essences</p>
             </div>
             <div className="text-right">
-              <span className="text-[#D4AF37] font-cinzel text-xl font-bold">₹3,499</span>
-              <span className="text-gray-500 text-xs line-through block">₹3,998</span>
+              <span className="text-[#D4AF37] font-cinzel text-xl font-bold">₹1,799</span>
+              <span className="text-gray-500 text-xs line-through block">₹1,998</span>
             </div>
           </div>
 
@@ -139,20 +139,20 @@ export const Popular: React.FC<PopularProps> = ({ onCartClick, cartCount, onTitl
               <p className="text-gray-400 text-[10px] text-center mt-1">Sharp & Modern</p>
             </div>
 
-            {/* Vibe Bottle */}
+            {/* Eyes Bottle */}
             <div className="bg-black/40 rounded-xl p-3 border border-white/5 flex flex-col items-center relative group">
               <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#D4AF37]/50 group-hover:bg-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.6)] transition-all"></div>
               <div className="h-24 w-full flex items-center justify-center mb-2">
                 <img
-                  src="/vibe%20(unisex).jpeg"
-                  alt="Vibe Bottle"
+                  src="/Eyes%20(female).jpeg"
+                  alt="Eyes Bottle"
                   className="w-12 h-20 object-contain rounded shadow-lg border border-gold/30 bg-black"
                 />
               </div>
               <h4 className="text-white font-cinzel text-sm tracking-wide flex flex-col items-center">
-                VIBE <span className="text-[8px] text-[#D4AF37]/70 font-sans tracking-[0.2em] mt-0.5">(Unisex)</span>
+                EYES <span className="text-[8px] text-[#D4AF37]/70 font-sans tracking-[0.2em] mt-0.5">(Female)</span>
               </h4>
-              <p className="text-gray-400 text-[10px] text-center mt-1">Deep & Magnetic</p>
+              <p className="text-gray-400 text-[10px] text-center mt-1">Sensual & Magnetic</p>
             </div>
           </div>
 

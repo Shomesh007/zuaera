@@ -77,32 +77,20 @@ export interface CartItem extends Product {
 
 type View = 'home' | 'collections' | 'product-detail' | 'about' | 'popular' | 'cart' | 'scent-dna' | 'checkout' | 'checkout-form' | 'admin-auth' | 'admin-dashboard';
 
+import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+
 const App: React.FC = () => {
   const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [products, setProducts] = useState<Product[]>(() => loadProducts());
-  const [currentView, setCurrentView] = useState<View>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('zuaera-view');
-      return (saved as View) || 'home';
-    }
-    return 'home';
-  });
-  const [activeCategory, setActiveCategory] = useState('04 Vibe');
+
+  // State management
+  const [activeCategory, setActiveCategory] = useState('All');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [toastProduct, setToastProduct] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('zuaera-selected-product');
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          return null;
-        }
-      }
-    }
-    return null;
-  });
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<OrderDetails[]>(() => {
     if (typeof window !== 'undefined') {
@@ -119,134 +107,65 @@ const App: React.FC = () => {
   });
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // Check for /admin path
+  // Sync state from URL for better deep linking experience
   useEffect(() => {
-    const pathname = window.location.pathname;
-    // Don't interfere with static file paths
-    const staticPaths = ['/robots.txt', '/sitemap.xml'];
-    if (staticPaths.includes(pathname)) return;
+    const path = location.pathname;
+    const searchParams = new URLSearchParams(location.search);
 
-    if (pathname === '/admin' || pathname === '/admin/') {
-      setCurrentView('admin-auth');
-    } else if (currentView === 'admin-auth' && !isAdminAuthenticated && pathname !== '/admin') {
-      // If on admin-auth but not authenticated and path changed, redirect
-      window.history.replaceState(null, '', '/');
+    if (path === '/collections') {
+      const cat = searchParams.get('filter') || 'All';
+      setActiveCategory(cat);
     }
-  }, []);
-
-  // Update URL when view changes
-  useEffect(() => {
-    // Don't rewrite URL for static file paths — let the server handle them
-    const staticPaths = ['/robots.txt', '/sitemap.xml'];
-    if (staticPaths.includes(window.location.pathname)) return;
-
-    if (isAdminAuthenticated && currentView === 'admin-dashboard') {
-      window.history.pushState(null, '', '/admin');
-    } else if (!isAdminAuthenticated && currentView !== 'admin-auth') {
-      window.history.replaceState(null, '', '/');
-    }
-  }, [currentView, isAdminAuthenticated]);
-
-  // Persist current view to localStorage
-  useEffect(() => {
-    localStorage.setItem('zuaera-view', currentView);
-  }, [currentView]);
-
-  // Persist selected product to localStorage
-  useEffect(() => {
-    if (selectedProduct) {
-      localStorage.setItem('zuaera-selected-product', JSON.stringify(selectedProduct));
-    } else {
-      localStorage.removeItem('zuaera-selected-product');
-    }
-  }, [selectedProduct]);
-
-  // Persist orders to localStorage
-  useEffect(() => {
-    localStorage.setItem('zuaera-orders', JSON.stringify(orders));
-  }, [orders]);
-
-  // Listen for bundle add event
-  useEffect(() => {
-    if (isDesktop) return; // Skip on desktop
-    const handler = () => {
-      const crisp = products.find(p => p.id === "01");
-      const vibe = products.find(p => p.id === "04");
-      if (crisp && vibe) {
-        // Add both only if not already in cart
-        setCartItems(prev => {
-          let updated = [...prev];
-          const crispKey = `${crisp.id}-30ML`;
-          const vibeKey = `${vibe.id}-30ML`;
-          if (!updated.find(i => i.cartItemId === crispKey)) {
-            updated.push({ ...crisp, volume: "30ML", price: crisp.price, quantity: 1, cartItemId: crispKey });
-          }
-          if (!updated.find(i => i.cartItemId === vibeKey)) {
-            updated.push({ ...vibe, volume: "30ML", price: vibe.price, quantity: 1, cartItemId: vibeKey });
-          }
-          return updated;
-        });
+    else if (path.startsWith('/product/')) {
+      const productName = path.replace('/product/', '').replace(/-/g, ' ');
+      const product = products.find(p => p.name.toLowerCase() === productName.toLowerCase());
+      if (product) {
+        setSelectedProduct(product);
       }
-    };
-    window.addEventListener('add-bundle-to-cart', handler);
-    return () => window.removeEventListener('add-bundle-to-cart', handler);
-  }, [isDesktop, products]);
+    }
+  }, [location.pathname, products, location.search]);
 
-  // Scroll to top instantly when view changes to prevent "extra scroll" issues
-  useEffect(() => {
-    if (isDesktop) return; // Skip on desktop
-    window.scrollTo(0, 0);
-  }, [currentView, isDesktop]);
+  // Handle Tab Change with Navigation
+  const handleTabChange = (view: View) => {
+    if (view === 'home') navigate('/');
+    else if (view === 'collections') navigate('/collections?filter=' + activeCategory);
+    else if (view === 'popular') navigate('/popular');
+    else if (view === 'cart') navigate('/cart');
+    else if (view === 'about') navigate('/about');
+  };
 
-  // If the SPA somehow loaded on a static file path, render nothing.
-  // The server should serve these files directly; this is a safety fallback.
-  const staticFilePaths = ['/robots.txt', '/sitemap.xml'];
-  if (staticFilePaths.includes(window.location.pathname)) {
-    return null;
-  }
+  const handleCategorySelect = (cat: string) => {
+    setActiveCategory(cat);
+    navigate(`/collections?filter=${cat}`);
+  };
 
-  // Admin bypass - allow desktop users to access the admin panel normally
-  const isAdminView = window.location.pathname.startsWith('/admin') || currentView === 'admin-auth' || currentView === 'admin-dashboard';
+  const handleProductSelect = (product: Product) => {
+    setSelectedProduct(product);
+    navigate(`/product/${product.name.toLowerCase().replace(/\s+/g, '-')}`);
+  };
 
   // Cart Handlers
   const handleAddToCart = (product: Product, volume: string, price: number) => {
     const newItemKey = `${product.id}-${volume}`;
-
     setCartItems(prev => {
       const existing = prev.find(item => item.cartItemId === newItemKey);
       if (existing) {
         return prev.map(item =>
-          item.cartItemId === newItemKey
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+          item.cartItemId === newItemKey ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [
-        ...prev,
-        {
-          ...product,
-          volume,
-          price,
-          quantity: 1,
-          cartItemId: newItemKey
-        }
-      ];
+      return [...prev, { ...product, volume, price, quantity: 1, cartItemId: newItemKey }];
     });
-
-    // Show toast notification
     setToastProduct(product.name);
   };
 
   const handleUpdateQuantity = (cartItemId: string, delta: number) => {
-    setCartItems(prev => {
-      return prev.map(item => {
-        if (item.cartItemId === cartItemId) {
-          const newQuantity = item.quantity + delta;
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      }).filter(item => item.quantity > 0);
-    });
+    setCartItems(prev => prev.map(item => {
+      if (item.cartItemId === cartItemId) {
+        return { ...item, quantity: item.quantity + delta };
+      }
+      return item;
+    }).filter(item => item.quantity > 0));
   };
 
   const handleRemoveFromCart = (cartItemId: string) => {
@@ -254,31 +173,23 @@ const App: React.FC = () => {
   };
 
   const handleCheckoutComplete = (order: OrderDetails) => {
-    // Save order
     setOrders(prev => [...prev, order]);
-    // Clear checkout items
     setCheckoutItems([]);
-    // Clear cart items
     setCartItems([]);
-
-    // Send to WhatsApp with order details
     const itemsList = order.items
       .map(item => `${item.name} (${item.volume}) x${item.quantity} - ₹${(item.price * item.quantity).toLocaleString('en-IN')}`)
       .join("%0A");
-
     const deliveryInfo = `%0A%0A📦 Delivery Details:%0A${order.delivery.firstName} ${order.delivery.lastName}%0A${order.delivery.address}${order.delivery.apartment ? '%0A' + order.delivery.apartment : ''}%0A${order.delivery.city}, ${order.delivery.state} ${order.delivery.pinCode}`;
-
     const msg = `🛍️ New Order #${order.id}%0A%0A${itemsList}%0A%0ASubtotal: ₹${(order.total / 1.08).toLocaleString('en-IN')}%0ATax: ₹${(order.total - order.total / 1.08).toLocaleString('en-IN')}%0A💰 Total: ₹${order.total.toLocaleString('en-IN')}${deliveryInfo}%0A%0n📧 Email: ${order.contact.email}`;
-
     window.open(`https://wa.me/917092009114?text=${msg}`);
-
-    // Show success and redirect to home
-    setCurrentView('home');
+    navigate('/');
     setToastProduct('Order placed successfully!');
   };
 
-  // If on desktop and not in admin, show the immersive futuristic desktop app
-  if (isDesktop && !isAdminView) {
+  const categories = ['All', ...new Set(products.map(p => p.navLabel))];
+
+  // Immersive PC detection
+  if (isDesktop && !location.pathname.startsWith('/admin')) {
     return (
       <DesktopApp
         products={products}
@@ -291,177 +202,172 @@ const App: React.FC = () => {
     );
   }
 
-  // Derive current product from active category or default to last product
-  const currentProduct = products.find(p => p.navLabel === activeCategory) || products[products.length - 1] || products[0];
-
-  // Get all category labels for header
-  const categories = products.map(p => p.navLabel);
-
-  // Pricing Logic Helper
-  const getPricing = (product: Product) => {
-    const is50 = product.volume === '50ML';
-    // Logic: If default is 50ml, 100ml is ~1.8x. If default is 100ml, 50ml is ~0.6x
-    const price50 = is50 ? product.price : Math.ceil((product.price * 0.6) / 100) * 100 - 1;
-    const price100 = !is50 ? product.price : Math.ceil((product.price * 1.8) / 100) * 100 - 1;
-    return { "50ML": price50, "100ML": price100 };
-  };
-
-  const currentPrices = getPricing(currentProduct);
-
   const cartTotalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const currentView = location.pathname === '/' ? 'home' : location.pathname.split('/')[1] as View;
+
+  const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
 
   return (
-    <div className="relative min-h-[100dvh] w-full flex flex-col bg-background-dark pb-24">
-      {/* Cart Toast Notification */}
+    <div className="relative min-h-[100dvh] w-full flex flex-col bg-background-dark pb-24 selection:bg-primary selection:text-black">
       <CartToast
         productName={toastProduct || ''}
         isVisible={!!toastProduct}
         onClose={() => setToastProduct(null)}
       />
 
-      {/* Global Header - Hidden on Popular and Product Detail views as they have their own custom header */}
-      {currentView !== 'popular' && currentView !== 'product-detail' && (
+      {/* Persistent Header */}
+      {!['product', 'checkout', 'admin'].some(p => location.pathname.startsWith('/' + p)) && location.pathname !== '/popular' && (
         <Header
           title="ZUAERA"
-          showCategories={currentView === 'collections'}
+          showCategories={location.pathname === '/collections'}
           categories={categories}
           activeCategory={activeCategory}
-          onCategorySelect={setActiveCategory}
-          onCartClick={() => setCurrentView('cart')}
-          onTitleClick={() => setCurrentView('home')}
+          onCategorySelect={handleCategorySelect}
+          onCartClick={() => navigate('/cart')}
+          onTitleClick={() => navigate('/')}
           cartCount={cartTotalItems}
         />
       )}
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full">
-        {currentView === 'home' && (
-          <div>
-            <ImagePreloader />
-            <Hero onExploreCollections={() => setCurrentView('collections')} />
-            <About />
-          </div>
-        )}
+      <main className="flex-1 w-full overflow-x-hidden">
+        <AnimatePresence mode="wait">
+          <Routes location={location}>
+            <Route path="/" element={
+              <PageTransition>
+                <ImagePreloader />
+                <Hero onExploreCollections={() => navigate('/collections')} />
+                <About />
+              </PageTransition>
+            } />
 
-        {currentView === 'collections' && (
-          <Collections
-            products={products}
-            onProductSelect={(product) => {
-              setSelectedProduct(product);
-              setCurrentView('product-detail');
-            }}
-            cartItems={cartItems}
-          />
-        )}
+            <Route path="/collections" element={
+              <PageTransition>
+                <Collections
+                  products={products}
+                  activeCategory={activeCategory}
+                  onProductSelect={handleProductSelect}
+                  cartItems={cartItems}
+                />
+              </PageTransition>
+            } />
 
-        {currentView === 'product-detail' && selectedProduct && (
-          <ProductDetail
-            product={selectedProduct}
-            onAddToCart={(quantity) => {
-              handleAddToCart(selectedProduct, '30ML', selectedProduct.price);
-              setToastProduct(selectedProduct.name);
-            }}
-            onBuyNow={(quantity) => {
-              const checkoutItem: CartItem = {
-                ...selectedProduct,
-                volume: '30ML',
-                price: selectedProduct.price,
-                quantity: quantity,
-                cartItemId: `${selectedProduct.id}-30ML`
-              };
-              setCheckoutItems([checkoutItem]);
-              setCurrentView('checkout-form');
-            }}
-            onBack={() => setCurrentView('collections')}
-          />
-        )}
+            <Route path="/product/:id" element={
+              <PageTransition>
+                {selectedProduct ? (
+                  <ProductDetail
+                    product={selectedProduct}
+                    onAddToCart={(quantity) => {
+                      handleAddToCart(selectedProduct, '30ML', selectedProduct.price);
+                      setToastProduct(selectedProduct.name);
+                    }}
+                    onBuyNow={(quantity) => {
+                      const checkoutItem: CartItem = {
+                        ...selectedProduct,
+                        volume: '30ML',
+                        price: selectedProduct.price,
+                        quantity: quantity,
+                        cartItemId: `${selectedProduct.id}-30ML`
+                      };
+                      setCheckoutItems([checkoutItem]);
+                      navigate('/checkout');
+                    }}
+                    onBack={() => navigate('/collections')}
+                  />
+                ) : <div className="pt-32 text-center text-white font-display tracking-widest">FINDING FRAGRANCE...</div>}
+              </PageTransition>
+            } />
 
-        {currentView === 'popular' && (
-          <div className="animate-fade-in">
-            <Popular
-              onCartClick={() => setCurrentView('cart')}
-              onTitleClick={() => setCurrentView('home')}
-              cartCount={cartTotalItems}
-            />
-          </div>
-        )}
+            <Route path="/popular" element={
+              <PageTransition>
+                <Popular
+                  onCartClick={() => navigate('/cart')}
+                  onTitleClick={() => navigate('/')}
+                  cartCount={cartTotalItems}
+                />
+              </PageTransition>
+            } />
 
-        {currentView === 'cart' && (
-          <Cart
-            items={cartItems}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemove={handleRemoveFromCart}
-            onBrowseCollection={() => setCurrentView('collections')}
-            onCheckout={() => {
-              if (cartItems.length > 0) {
-                setCheckoutItems(cartItems);
-                setCurrentView('checkout-form');
-              }
-            }}
-          />
-        )}
+            <Route path="/cart" element={
+              <PageTransition>
+                <Cart
+                  items={cartItems}
+                  onUpdateQuantity={handleUpdateQuantity}
+                  onRemove={handleRemoveFromCart}
+                  onBrowseCollection={() => navigate('/collections')}
+                  onCheckout={() => {
+                    if (cartItems.length > 0) {
+                      setCheckoutItems(cartItems);
+                      navigate('/checkout');
+                    }
+                  }}
+                />
+              </PageTransition>
+            } />
 
-        {currentView === 'checkout-form' && (
-          <CheckoutForm
-            items={checkoutItems}
-            onCheckoutComplete={handleCheckoutComplete}
-            onBack={() => setCurrentView('cart')}
-          />
-        )}
+            <Route path="/checkout" element={
+              <PageTransition>
+                <CheckoutForm
+                  items={checkoutItems}
+                  onCheckoutComplete={handleCheckoutComplete}
+                  onBack={() => navigate('/cart')}
+                />
+              </PageTransition>
+            } />
 
-        {currentView === 'admin-auth' && !isAdminAuthenticated && (
-          <AdminAuth
-            onAuthenticate={() => {
-              setIsAdminAuthenticated(true);
-              setCurrentView('admin-dashboard');
-              window.history.pushState(null, '', '/admin');
-            }}
-            onBack={() => {
-              setCurrentView('home');
-              window.history.replaceState(null, '', '/');
-            }}
-          />
-        )}
+            <Route path="/about" element={
+              <PageTransition>
+                <div className="pt-20">
+                  <About />
+                </div>
+              </PageTransition>
+            } />
 
-        {currentView === 'admin-dashboard' && isAdminAuthenticated && (
-          <AdminDashboard
-            orders={orders}
-            onLogout={() => {
-              setIsAdminAuthenticated(false);
-              setCurrentView('home');
-              window.history.replaceState(null, '', '/');
-            }}
-            onProductsChange={(updated) => setProducts(updated)}
-          />
-        )}
-
-
-
-        {currentView === 'scent-dna' && currentProduct && (
-          <ScentDNA
-            product={currentProduct}
-            price={currentProduct.price}
-            onBack={() => setCurrentView('collections')}
-            onAddToCollection={() => {
-              handleAddToCart(currentProduct, '30ML', currentProduct.price);
-              setCurrentView('cart');
-            }}
-          />
-        )}
-
-        {currentView === 'about' && (
-          <div className="pt-20 animate-fade-in">
-            <About />
-          </div>
-        )}
+            <Route path="/admin" element={
+              <PageTransition>
+                {isAdminAuthenticated ? (
+                  <AdminDashboard
+                    orders={orders}
+                    onLogout={() => { setIsAdminAuthenticated(false); navigate('/'); }}
+                    onProductsChange={(updated) => setProducts(updated)}
+                  />
+                ) : (
+                  <AdminAuth
+                    onAuthenticate={() => { setIsAdminAuthenticated(true); navigate('/admin'); }}
+                    onBack={() => navigate('/')}
+                  />
+                )}
+              </PageTransition>
+            } />
+          </Routes>
+        </AnimatePresence>
       </main>
 
-      {/* Global Bottom Navigation - Hidden on scent-dna, product-detail, checkout-form, admin-auth, and admin-dashboard views */}
-      {currentView !== 'scent-dna' && currentView !== 'product-detail' && currentView !== 'checkout-form' && currentView !== 'admin-auth' && currentView !== 'admin-dashboard' && (
-        <BottomNav activeTab={currentView} onTabChange={setCurrentView} />
+      {/* Scroll-to-top on route change */}
+      <ScrollToTop />
+
+      {/* Global Bottom Navigation */}
+      {!['product', 'checkout', 'admin'].some(p => location.pathname.startsWith('/' + p)) && (
+        <BottomNav activeTab={currentView} onTabChange={handleTabChange} />
       )}
     </div>
   );
+};
+
+// Helper component for restoration
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
 };
 
 export default App;

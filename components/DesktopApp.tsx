@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Product, CartItem } from '../App';
 import { CheckoutForm, OrderDetails } from './CheckoutForm';
 import { About } from './About';
+import { ProductDetailPC } from './ProductDetailPC';
+import { BundleDetailPC } from './BundleDetailPC';
 
 interface DesktopAppProps {
     products: Product[];
@@ -23,6 +25,8 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
     onCheckoutComplete,
 }) => {
     const [modalView, setModalView] = useState<ModalView>('none');
+    const [selectedProductForDetail, setSelectedProductForDetail] = useState<Product | null>(null);
+    const [showBundleDetail, setShowBundleDetail] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const cartTotalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -46,6 +50,26 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
     };
 
     if (!activeProduct) return null;
+
+    if (selectedProductForDetail) {
+        return (
+            <ProductDetailPC
+                product={selectedProductForDetail}
+                onAddToCart={handleAddToCartClick}
+                onClose={() => setSelectedProductForDetail(null)}
+            />
+        );
+    }
+
+    if (showBundleDetail) {
+        return (
+            <BundleDetailPC
+                products={[products[0], products[1]]}
+                onAddToCart={handleAddToCartClick}
+                onClose={() => setShowBundleDetail(false)}
+            />
+        );
+    }
 
     return (
         <div className="relative min-h-screen bg-[#0a0905] text-white overflow-y-auto overflow-x-hidden font-display flex flex-col selection:bg-[#f2d00d] selection:text-black scroll-smooth">
@@ -183,8 +207,8 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                                         src={product.name === 'CRISP' ? '/crispy_display.png' : product.name === 'EYES' ? '/eyes_display.png' : '/vibe_display.png'}
                                         alt={`${product.name} Display`}
                                         className={`w-full h-full object-cover object-top drop-shadow-[0_40px_40px_rgba(0,0,0,0.8)] transition-all duration-700 group-hover:scale-115 relative z-10 ${product.name === 'CRISP' ? '-translate-y-10 scale-110' :
-                                                product.name === 'VIBE' ? '-translate-y-6 scale-110' :
-                                                    'translate-y-4'
+                                            product.name === 'VIBE' ? '-translate-y-6 scale-110' :
+                                                'translate-y-4'
                                             }`}
                                     />
                                 </div>
@@ -205,10 +229,10 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                                 </p>
 
                                 <button
-                                    onClick={() => handleAddToCartClick(product)}
+                                    onClick={() => setSelectedProductForDetail(product)}
                                     className="mt-auto mb-4 bg-transparent border border-[#f2d00d]/30 rounded-full px-12 py-4 text-[12px] uppercase tracking-[0.2em] text-[#f2d00d] hover:bg-[#f2d00d] hover:text-black hover:border-[#f2d00d] transition-all duration-500 font-bold relative z-20 hover:shadow-[0_0_20px_rgba(242,208,13,0.3)]"
                                 >
-                                    Explore More
+                                    Know More
                                 </button>
                             </div>
                         ))}
@@ -327,13 +351,10 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                             </p>
 
                             <button
-                                onClick={() => {
-                                    handleAddToCartClick(products[0]); // CRISP
-                                    handleAddToCartClick(products[1]); // EYES (assuming it's second)
-                                }}
-                                className="px-10 py-3 bg-[#f2d00d] text-black text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-white transition-colors duration-300"
+                                onClick={() => setShowBundleDetail(true)}
+                                className="px-10 py-3 bg-[#f2d00d] text-black text-xs font-bold uppercase tracking-[0.2em] rounded-sm hover:bg-white transition-all transform active:scale-95 shadow-[0_0_20px_rgba(242,208,13,0.3)]"
                             >
-                                Bundle & Save
+                                Know More
                             </button>
 
                             <div className="mt-16 self-end mr-8 opacity-70">
@@ -453,7 +474,6 @@ export const DesktopApp: React.FC<DesktopAppProps> = ({
                     </div>
                 )
             }
-
             {/* Toast Notification */}
             <div
                 className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 bg-white text-black rounded-sm flex items-center gap-3 tracking-widest text-xs font-bold font-mono transition-all duration-500 shadow-2xl ${toastMessage ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}

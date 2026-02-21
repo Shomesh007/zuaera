@@ -5,16 +5,21 @@ interface CollectionsProps {
   products: Product[];
   onProductSelect: (product: Product) => void;
   cartItems: CartItem[];
+  activeCategory: string;
 }
 
 export const Collections: React.FC<CollectionsProps> = ({
   products,
   onProductSelect,
   cartItems,
+  activeCategory,
 }) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const displayProducts = products.slice(0, 3);
+  // Filter products based on activeCategory (which is now All, Male, Female, or Unisex)
+  const displayProducts = activeCategory === 'All'
+    ? products
+    : products.filter(p => p.navLabel === activeCategory);
 
   return (
     <div className="relative w-full min-h-screen bg-background-dark">
@@ -76,12 +81,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       className="group relative bg-gradient-to-br from-gray-900 to-black rounded-lg overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer"
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
+      onClick={onProductClick}
       style={{
         boxShadow: isHovered ? '0 0 30px rgba(242, 208, 13, 0.15)' : '0 10px 30px rgba(0, 0, 0, 0.3)',
       }}
     >
       {/* Image Container */}
-      <div className="relative w-full h-[300px] flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-700">
+      <div className="relative w-full h-[220px] md:h-[300px] flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-700">
         <img
           src={
             product.name.toLowerCase().includes('crisp') ? '/Crispy (Male).jpeg' :
@@ -90,7 +96,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   product.image
           }
           alt={product.name}
-          className={`w-auto h-[90%] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] transition-all duration-700 ${isHovered ? 'scale-110 -translate-y-4' : 'scale-100'}`}
+          className={`w-full h-full object-cover md:w-auto md:h-[90%] md:object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] transition-all duration-700 ${isHovered ? 'scale-110 -translate-y-4' : 'scale-100'}`}
         />
       </div>
 
@@ -108,7 +114,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Content Container */}
       <div className="p-4 md:p-6 flex flex-col gap-3">
         {/* Product Name */}
-        <div className="flex flex-col cursor-pointer" onClick={onProductClick}>
+        <div className="flex flex-col cursor-pointer">
           <h3
             className="text-lg md:text-xl font-light tracking-wider text-gold transition-colors hover:text-yellow-300"
           >
