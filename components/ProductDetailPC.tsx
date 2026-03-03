@@ -17,12 +17,30 @@ export const ProductDetailPC: React.FC<ProductDetailPCProps> = ({
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-    // Mock images based on the product
-    const images = product.name === 'CRISP'
-        ? ['/crispy3.png', '/crispy2.jpeg', '/crispy_bundle.png']
-        : product.name === 'EYES'
-            ? ['/Eyes%20(female).jpeg', '/eyes_bundle.png', '/eyes_display.png']
-            : ['/vibe%20(unisex).jpeg', '/vibe2.jpeg', '/vibe3.jpg'];
+    // Use stored images first, fallback to hardcoded
+    let images: string[] = [];
+    
+    try {
+      const parsedImages = JSON.parse(product.image);
+      if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+        images = parsedImages;
+      }
+    } catch {
+      if (typeof product.image === 'string' && product.image) {
+        images = [product.image];
+      }
+    }
+
+    // Fallback to hardcoded
+    if (images.length === 0) {
+      if (product.name === 'CRISP') {
+        images = ['/crispy3.png', '/crispy2.jpeg', '/crispy_bundle.png'];
+      } else if (product.name === 'EYES') {
+        images = ['/Eyes%20(female).jpeg', '/eyes_bundle.png', '/eyes_display.png'];
+      } else {
+        images = ['/vibe%20(unisex).jpeg', '/vibe2.jpeg', '/vibe3.jpg'];
+      }
+    }
 
     const discount = 36;
     const mrp = Math.round(product.price / (1 - discount / 100));

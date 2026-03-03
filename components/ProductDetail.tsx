@@ -22,27 +22,42 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Mock 4 images - replace with actual images when provided
-  // Assign images based on product name (Crisp, Vibe, Eyes)
+  // Use stored images first, fallback to hardcoded
   let images: string[] = [];
-  if (product.name.toLowerCase().includes('crisp')) {
-    images = [
-      '/Crispy (Male).jpeg',
-      '/crispy2.jpeg',
-      '/crispy3.png',
-    ];
-  } else if (product.name.toLowerCase().includes('vibe')) {
-    images = [
-      '/vibe (unisex).jpeg',
-      '/vibe2.jpeg',
-      '/vibe3.jpg',
-    ];
-  } else if (product.name.toLowerCase().includes('eyes')) {
-    images = [
-      '/Eyes (female).jpeg',
-    ];
-  } else {
-    images = [product.image];
+  
+  try {
+    const parsedImages = JSON.parse(product.image);
+    if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+      images = parsedImages;
+    }
+  } catch {
+    // If image is a string (single image), use it
+    if (typeof product.image === 'string' && product.image) {
+      images = [product.image];
+    }
+  }
+
+  // Fallback to hardcoded images if nothing stored
+  if (images.length === 0) {
+    if (product.name.toLowerCase().includes('crisp')) {
+      images = [
+        '/Crispy (Male).jpeg',
+        '/crispy2.jpeg',
+        '/crispy3.png',
+      ];
+    } else if (product.name.toLowerCase().includes('vibe')) {
+      images = [
+        '/vibe (unisex).jpeg',
+        '/vibe2.jpeg',
+        '/vibe3.jpg',
+      ];
+    } else if (product.name.toLowerCase().includes('eyes')) {
+      images = [
+        '/Eyes (female).jpeg',
+      ];
+    } else {
+      images = [product.image];
+    }
   }
 
   // Auto-scroll carousel every 5 seconds
